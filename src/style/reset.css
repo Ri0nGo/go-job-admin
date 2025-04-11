@@ -1,0 +1,93 @@
+/* 基础重置样式 */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+  
+  html, body {
+    height: 100%;
+    font-family: 'Helvetica Neue', Helvetica, 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', '微软雅黑', Arial, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    font-size: 14px;
+    color: #333;
+    background-color: #f5f7fa;
+  }
+  
+  a {
+    text-decoration: none;
+    color: #409eff;
+  }
+  
+  ul, ol {
+    list-style: none;
+  }
+  
+  img {
+    max-width: 100%;
+    height: auto;
+    display: block;
+  }
+  
+  button, input, select, textarea {
+    font-family: inherit;
+    font-size: inherit;
+    line-height: inherit;
+    color: inherit;
+  }
+  
+  /* 清除浮动 */
+  .clearfix:after {
+    content: "";
+    display: table;
+    clear: both;
+  }
+  
+  /* 常用辅助类 */
+  .text-center {
+    text-align: center;
+  }
+  
+  .text-left {
+    text-align: left;
+  }
+  
+  .text-right {
+    text-align: right;
+  }
+  
+  .hidden {
+    display: none !important;
+  }
+  
+  .flex {
+    display: flex;
+  }
+  
+  .flex-center {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  
+  .flex-between {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  
+  .flex-column {
+    display: flex;
+    flex-direction: column;
+  }
+  
+  /* 间距类 */
+  .mt-10 { margin-top: 10px; }
+  .mr-10 { margin-right: 10px; }
+  .mb-10 { margin-bottom: 10px; }
+  .ml-10 { margin-left: 10px; }
+  .pt-10 { padding-top: 10px; }
+  .pr-10 { padding-right: 10px; }
+  .pb-10 { padding-bottom: 10px; }
+  .pl-10 { padding-left: 10px; }
