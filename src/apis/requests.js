@@ -22,15 +22,14 @@ service.interceptors.request.use(
 service.interceptors.response.use(
   (response) => {
     const res = response.data
-    console.log('Response Data:', res)
-    console.log("res header", response.headers)
+
     if (res.code != 0) {
       ElMessage.error(res.msg || '请求失败')
       return Promise.reject(new Error(res.msg || 'Error'))
     }
+
     // 处理 jwt token
     const authHeader = response.headers['Authorization'] || response.headers['authorization']
-    console.log('Authorization Header:', response.headers, authHeader)
     if (authHeader) {
       localStorage.setItem('token', authHeader)
     }
@@ -38,6 +37,11 @@ service.interceptors.response.use(
     return res.data ?? res
   },
   (error) => {
+    if (error.response?.status === 401) {
+      localStorage.removeItem('token')
+      window.location.href = '/login'
+      return Promise.reject(new Error('登录已过期'))
+    }
     ElMessage.error(error.response?.data?.message || '网络异常')
     return Promise.reject(error)
   }

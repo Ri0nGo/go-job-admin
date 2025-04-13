@@ -34,8 +34,18 @@
 
 <script setup>
 import { ref } from 'vue'
+import { getNodes } from '@/apis/nodes'
 
 // 表格数据
+onMounted(async () => {
+  try {
+    const res = await getNodes()
+    console.log("res: ", res.data)
+    tableData.value = res.data
+  } catch (err) {
+    console.log(err)
+  }
+})
 const tableData = ref([
   {
     id: 1,
