@@ -15,7 +15,7 @@
                     <el-icon>
                         <Tickets />
                     </el-icon>
-                    <span>任务列表</span>
+                    <span>任务管理</span>
                 </el-menu-item>
                 <el-menu-item index="/nodes">
                     <el-icon>

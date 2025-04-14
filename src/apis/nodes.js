@@ -10,7 +10,7 @@ export function getNodes(params = defaultPageSize) {
 }
 
 // 创建job
-export function create(data) {
+export function createNode(data) {
     return service({
         url: `/nodes/add`,
         method: 'post',
@@ -19,18 +19,18 @@ export function create(data) {
 }
 
 // 更新job
-export function updateJob(data) {
+export function updateNode(data) {
     return service({
-        url: `/jobs/update`,
+        url: `/nodes/update`,
         method: 'put',
         data,
     })
 }
 
 // 删除job
-export function deleteJob(id) {
+export function deleteNode(id) {
     return service({
-        url: `/jobs/${id}`,
+        url: `/nodes/${id}`,
         method: 'delete',
     })
 }

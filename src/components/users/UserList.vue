@@ -1,19 +1,31 @@
 <template>
   <div class="user-list-container">
+    <div class="header-actions">
+      <el-button type="primary" @click="handleAdd">新增用户</el-button>
+      <div class="search-box">
+        <el-input
+          v-model="searchKeyword"
+          placeholder="请输入用户名搜索"
+          clearable
+          @clear="fetchUsers"
+          @keyup.enter="fetchUsers"
+        >
+          <template #prefix>
+            <el-icon><Search /></el-icon>
+          </template>
+        </el-input>
+      </div>
+    </div>
+
     <el-table :data="tableData" style="width: 100%" v-loading="loading">
-      <el-table-column prop="id" label="用户ID" width="180" />
+      <el-table-column prop="nickname" label="昵称" width="200" align="center" />
       <el-table-column prop="username" label="用户名" width="180" />
-      <el-table-column prop="role" label="角色" width="180" />
-      <el-table-column prop="status" label="状态">
+      <el-table-column prop="about" label="简介" width="300" align="center" />
+      <el-table-column prop="created_time" label="创建时间" align="center"/>
+      <el-table-column label="操作" width="180" align="center">
         <template #default="{ row }">
-          <el-tag :type="getStatusType(row.status)">{{ row.status }}</el-tag>
-        </template>
-      </el-table-column>
-      <el-table-column prop="createTime" label="创建时间" />
-      <el-table-column label="操作" width="200">
-        <template #default="{ row }">
-          <el-button size="small" @click="handleEdit(row)">编辑</el-button>
-          <el-button size="small" type="danger" @click="handleDelete(row)">删除</el-button>
+          <el-button text type="primary" size="default" @click="handleEdit(row)">编辑</el-button>
+          <el-button text type="primary" size="default" @click="handleDelete(row)">删除</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -29,29 +41,27 @@
         @current-change="handleCurrentChange"
       />
     </div>
+
+    <UserEditDialog
+      v-model:visible="editDialogVisible"
+      :userData="currentUser"
+      @refresh="fetchUsers"
+    />
   </div>
 </template>
 
 <script setup>
-import { ref } from 'vue'
+import { ref, onMounted } from 'vue'
+import { getUsers, deleteUser } from '@/apis/users'
+import { Search } from '@element-plus/icons-vue'
+import { ElMessageBox, ElMessage } from 'element-plus'
+import UserEditDialog from './UserEditDialog.vue'
+
+// 搜索关键字
+const searchKeyword = ref('')
 
 // 表格数据
-const tableData = ref([
-  {
-    id: 1,
-    username: 'admin',
-    role: '管理员',
-    status: '正常',
-    createTime: '2024-01-20 10:00:00'
-  },
-  {
-    id: 2,
-    username: 'user01',
-    role: '普通用户',
-    status: '禁用',
-    createTime: '2024-01-19 15:30:00'
-  }
-])
+const tableData = ref([])
 
 // 加载状态
 const loading = ref(false)
@@ -59,7 +69,33 @@ const loading = ref(false)
 // 分页相关
 const currentPage = ref(1)
 const pageSize = ref(10)
-const total = ref(100)
+const total = ref(0)
+
+// 编辑对话框相关
+const editDialogVisible = ref(false)
+const currentUser = ref({})
+
+// 用户编辑对话框组件
+const userEditDialogRef = ref(null)
+
+// 获取用户列表数据
+const fetchUsers = async () => {
+  loading.value = true
+  try {
+    const params = {
+      page: currentPage.value,
+      size: pageSize.value,
+      keyword: searchKeyword.value
+    }
+    const res = await getUsers(params)
+    tableData.value = res.data
+    total.value = res.total
+  } catch (error) {
+    ElMessage.error(error.message || '获取用户列表失败')
+  } finally {
+    loading.value = false
+  }
+}
 
 // 状态标签类型
 const getStatusType = (status) => {
@@ -74,23 +110,48 @@ const getStatusType = (status) => {
 
 // 分页方法
 const handleSizeChange = (val) => {
-  console.log(`每页 ${val} 条`)
-  // TODO: 重新获取数据
+  pageSize.value = val
+  currentPage.value = 1
+  fetchUsers()
 }
 
 const handleCurrentChange = (val) => {
-  console.log(`当前页: ${val}`)
-  // TODO: 重新获取数据
+  currentPage.value = val
+  fetchUsers()
 }
 
-// 操作方法
+// 新增用户
+const handleAdd = () => {
+  currentUser.value = {}
+  editDialogVisible.value = true
+}
+
+// 编辑用户
 const handleEdit = (row) => {
-  console.log('编辑用户', row)
+  currentUser.value = { ...row }
+  editDialogVisible.value = true
 }
 
+// 删除用户
 const handleDelete = (row) => {
-  console.log('删除用户', row)
+  ElMessageBox.confirm('确认删除该用户吗？', '提示', {
+    confirmButtonText: '确定',
+    cancelButtonText: '取消',
+    type: 'warning'
+  }).then(async () => {
+    try {
+      await deleteUser(row.id)
+      ElMessage.success('删除成功')
+      fetchUsers()
+    } catch (error) {
+      ElMessage.error(error.message || '删除失败')
+    }
+  })
 }
+
+onMounted(() => {
+  fetchUsers()
+})
 </script>
 
 <style scoped>
@@ -99,7 +160,17 @@ const handleDelete = (row) => {
   height: 100%;
   display: flex;
   flex-direction: column;
-  justify-content: space-between; /* 上下对齐 */
+  gap: 20px;
+}
+
+.header-actions {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.search-box {
+  width: 300px;
 }
 
 .pagination-container {

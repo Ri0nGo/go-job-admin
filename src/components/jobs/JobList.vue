@@ -26,38 +26,38 @@
         <el-table-column prop="name" label="任务名称" />
         <el-table-column prop="node_name" label="节点名称" />
         <el-table-column prop="exec_type" label="执行方式" width="120" align="center">
-          <template #default="{ row }">
-            <el-tag :type="getExecTypeTagType(row.exec_type)" size="default" style="letter-spacing: 1px;">
-              {{ getExecTypeName(row.exec_type) }}
+          <template #default="scope">
+            <el-tag :type="getExecTypeTagType(scope.row.exec_type)" size="default" style="letter-spacing: 1px;">
+              {{ getExecTypeName(scope.row.exec_type) }}
             </el-tag>
           </template>
         </el-table-column>
         <el-table-column prop="cron_expr" label="表达式" align="center">
-          <template #default="{ row }">
+          <template #default="scope">
             <el-tag size="default"
               style="font-family: monospace; margin: 2px; background-color: #eee; border: 0; color: #666;">
-              {{ row.cron_expr }}
+              {{ scope.row.cron_expr }}
             </el-tag>
           </template>
         </el-table-column>
         <el-table-column prop="active" label="状态" width="80" align="center">
-          <template #default="{ row }">
-            <el-switch v-model="row.active" :active-value="1" :inactive-value="2"
-              style="--el-switch-on-color: #13ce66; --el-switch-off-color: #ececec" @change="handleStatusChange(row)" />
+          <template #default="scope">
+            <el-switch v-model="scope.row.active" :active-value="1" :inactive-value="2"
+              style="--el-switch-on-color: #13ce66; --el-switch-off-color: #ececec" @change="handleStatusChange(scope.row)" />
           </template>
         </el-table-column>
         <el-table-column prop="created_time" label="创建时间">
-          <template #default="{ row }">
-            {{ formatTime(row.created_time) }}
+          <template #default="scope">
+            {{ formatTime(scope.row.created_time) }}
           </template>
         </el-table-column>
 
         <el-table-column label="操作" width="280" align="center">
-          <template #default="{ row }">
+          <template #default="scope">
             <div style="display: flex; justify-content: center; gap: 8px;">
-              <el-button text type="primary" size="default" @click="handleEdit(row)">编辑</el-button>
-              <el-button text type="primary" size="default" @click="handleDelete(row)">删除</el-button>
-              <el-button text type="primary" size="default" @click="handleViewRecords(row)">日志</el-button>
+              <el-button text type="primary" size="default" @click="handleEdit(scope.row)">编辑</el-button>
+              <el-button text type="primary" size="default" @click="handleDelete(scope.row)">删除</el-button>
+              <el-button text type="primary" size="default" @click="handleViewRecords(scope.row)">日志</el-button>
             </div>
           </template>
         </el-table-column>
@@ -85,7 +85,7 @@
 
 <script setup>
 import { ref, onMounted } from 'vue'
-import { getJobs, deleteJob } from '@/apis/jobs'
+import { getJobs, deleteJob, updateJob } from '@/apis/jobs'
 import JobEditDialog from './JobEditDialog.vue'
 import { Search } from '@element-plus/icons-vue'
 import CreateJob from './CreateJob.vue'
@@ -203,9 +203,16 @@ const handleDelete = (row) => {
 }
 
 // 状态切换
-const handleStatusChange = (row) => {
-  console.log('状态变更', row.id, row.active)
-  // TODO: 调用API更新状态
+const handleStatusChange = async (row) => {
+  try {
+    await updateJob(row)
+    ElMessage.success('状态更新成功')
+    fetchJobs()
+  } catch (error) {
+    ElMessage.error('状态更新失败：' + error.message)
+    // 恢复状态
+    row.active = row.active === 1 ? 2 : 1
+  }
 }
 
 // 新增任务
@@ -228,8 +235,12 @@ const handleSearch = () => {
 
 // 查看任务记录
 const handleViewRecords = (row) => {
-  selectedJobId.value = row.id
-  recordsDialogVisible.value = true
+  if (row && row.id) {
+    selectedJobId.value = row.id
+    recordsDialogVisible.value = true
+  } else {
+    ElMessage.warning('无法获取任务ID，请重试')
+  }
 }
 
 // 表格选择事件

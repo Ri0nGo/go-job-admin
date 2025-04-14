@@ -81,7 +81,8 @@ const visible = defineModel('visible')
 const props = defineProps({
   jobId: {
     type: [String, Number],
-    required: true
+    required: true,
+    default: ''
   }
 })
 
@@ -98,6 +99,10 @@ const currentRecord = ref({})
 const fetchRecords = async () => {
   loading.value = true
   try {
+    if (!props.jobId) {
+      ElMessage.warning('任务ID不能为空')
+      return
+    }
     const res = await getJobRecords({ job_id: props.jobId })
     recordData.value = res.data.map(item => ({
       ...item,
