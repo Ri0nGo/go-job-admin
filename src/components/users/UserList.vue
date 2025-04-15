@@ -156,14 +156,14 @@ onMounted(() => {
 
 <style scoped>
 .user-list-container {
-  padding: 20px;
   height: 100%;
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  padding: 20px;
 }
 
 .header-actions {
+  padding-bottom: 15px;
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -173,9 +173,15 @@ onMounted(() => {
   width: 300px;
 }
 
+.el-table {
+  flex: 1;
+  overflow: auto;
+}
+
 .pagination-container {
-  margin-top: 20px;
+  padding: 15px 0;
   display: flex;
   justify-content: flex-end;
+  background-color: #fff;
 }
 </style>

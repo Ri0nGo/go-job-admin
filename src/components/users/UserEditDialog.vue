@@ -12,18 +12,19 @@
       :rules="rules"
       label-width="80px"
       style="padding: 0 20px"
+      autocomplete="off"
     >
       <el-form-item label="昵称" prop="nickname">
-        <el-input v-model="formData.nickname" placeholder="请输入昵称" />
+        <el-input v-model="formData.nickname" placeholder="请输入昵称"/>
       </el-form-item>
       <el-form-item label="用户名" prop="username">
-        <el-input v-model="formData.username" placeholder="请输入用户名" />
+        <el-input v-model="formData.username" placeholder="请输入用户名" autocomplete="off" />
       </el-form-item>
       <el-form-item label="密码" prop="password" v-if="!formData.id">
-        <el-input v-model="formData.password" type="password" show-password placeholder="请输入密码" />
+        <el-input v-model="formData.password" type="password" show-password placeholder="请输入密码" autocomplete="new-password" />
       </el-form-item>
-      <el-form-item label="确认密码" prop="confirmPassword" v-if="!formData.id">
-        <el-input v-model="formData.confirmPassword" type="password" show-password placeholder="请再次输入密码" />
+      <el-form-item label="确认密码" prop="confirm_password" v-if="!formData.id">
+        <el-input v-model="formData.confirm_password" type="password" show-password placeholder="请再次输入密码" autocomplete="new-password" />
       </el-form-item>
       <el-form-item label="关于我" prop="about">
         <el-input v-model="formData.about" type="textarea" :rows="3" placeholder="请输入个人简介" />
@@ -68,17 +69,15 @@ const formData = ref({
   nickname: '',
   username: '',
   password: '',
-  confirmPassword: '',
-  about: '',
-  role: '',
-  status: '正常'
+  confirm_password: '',
+  about: ''
 })
 
 const rules = {
   nickname: [{ required: true, message: '请输入昵称', trigger: 'blur' }],
   username: [{ required: true, message: '请输入用户名', trigger: 'blur' }],
   password: [{ required: true, message: '请输入密码', trigger: 'blur' }],
-  confirmPassword: [{ 
+  confirm_password: [{ 
     required: true, 
     message: '请再次输入密码', 
     trigger: 'blur',
@@ -92,8 +91,6 @@ const rules = {
       }
     }
   }],
-  role: [{ required: true, message: '请选择角色', trigger: 'change' }],
-  status: [{ required: true, message: '请选择状态', trigger: 'change' }],
   about: [{ required: false, message: '请输入个人简介', trigger: 'blur' }]
 }
 
@@ -134,10 +131,8 @@ const handleDialogClosed = () => {
     nickname: '',
     username: '',
     password: '',
-    confirmPassword: '',
+    confirm_password: '',
     about: '',
-    role: '',
-    status: '正常'
   }
 }
 </script>

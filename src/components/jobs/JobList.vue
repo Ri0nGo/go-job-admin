@@ -194,7 +194,6 @@ const handleDelete = (row) => {
   }).then(async () => {
     try {
       await deleteJob(row.id)
-      ElMessage.success('删除成功')
       fetchJobs()
     } catch (error) {
       ElMessage.error('删除失败：' + error.message)
@@ -287,7 +286,12 @@ const handleSelectionChange = (selection) => {
   flex: 1;
   display: flex;
   flex-direction: column;
-  overflow: auto;
+  min-height: 0;
+}
+
+.el-table {
+  flex: 1;
+  overflow: hidden;
 }
 
 .content-button {

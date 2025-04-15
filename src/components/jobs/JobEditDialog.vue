@@ -136,7 +136,6 @@ const loadNodes = async () => {
     nodes.value = res.data
   } catch (error) {
     console.error('获取节点列表失败:', error)
-    ElMessage.error('获取节点列表失败')
   }
 }
 
@@ -214,8 +213,8 @@ const handleClose = () => {
 
 // 处理文件变更
 const handleFileChange = async (file) => {
-  if (file.size > 10 * 1024 * 1024) {
-    ElMessage.error('文件大小不能超过10MB')
+  if (file.size > 5 * 1024 * 1024) {
+    ElMessage.error('文件大小不能超过5MB')
     return false
   }
   form.file = file.raw
@@ -231,7 +230,6 @@ const handleFileChange = async (file) => {
     ElMessage.success('文件上传成功')
   } catch (error) {
     console.error('文件上传失败:', error)
-    ElMessage.error('文件上传失败，请重试')
   }
 }
 

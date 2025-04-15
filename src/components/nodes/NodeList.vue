@@ -17,39 +17,36 @@
       </div>
     </div>
 
-    <el-table :data="tableData" style="width: 100%" v-loading="loading" :row-height="50" :cell-style="{ textAlign: 'center' }" :header-cell-style="{ textAlign: 'center' }">
-      <el-table-column prop="id" label="节点ID" width="120" />
-      <el-table-column prop="name" label="节点名称" width="180" />
-      <el-table-column prop="address" label="地址" width="180" />
-      <el-table-column prop="description" label="描述" width="300" />
-      <!-- <el-table-column prop="status" label="状态">
+    <div class="job-content">
+      <el-table :data="tableData" style="width: 100%" v-loading="loading" :row-height="50"
+        :cell-style="{ textAlign: 'center' }" :header-cell-style="{ textAlign: 'center' }">
+        <el-table-column prop="id" label="节点ID" width="120" />
+        <el-table-column prop="name" label="节点名称" width="180" />
+        <el-table-column prop="address" label="地址" width="180" />
+        <el-table-column prop="description" label="描述" width="300" />
+        <!-- <el-table-column prop="status" label="状态">
         <template #default="scope">
           <el-tag :type="getStatusType(scope.row.status)">{{ scope.row.status }}</el-tag>
         </template>
       </el-table-column> -->
-      <el-table-column label="创建时间">
-        <template #default="scope">
-          {{ formatDate(scope.row.created_at) }}
-        </template>
-      </el-table-column>
-      <el-table-column label="操作" width="200">
-        <template #default="scope">
-          <el-button text type="primary" size="default" @click="handleEdit(scope.row)">编辑</el-button>
-          <el-button text type="primary" size="default" @click="handleDelete(scope.row)">删除</el-button>
-        </template>
-      </el-table-column>
-    </el-table>
+        <el-table-column label="创建时间">
+          <template #default="scope">
+            {{ formatDate(scope.row.created_at) }}
+          </template>
+        </el-table-column>
+        <el-table-column label="操作" width="200">
+          <template #default="scope">
+            <el-button text type="primary" size="default" @click="handleEdit(scope.row)">编辑</el-button>
+            <el-button text type="primary" size="default" @click="handleDelete(scope.row)">删除</el-button>
+          </template>
+        </el-table-column>
+      </el-table>
 
-    <div class="pagination-container">
-      <el-pagination
-        v-model:current-page="currentPage"
-        v-model:page-size="pageSize"
-        :page-sizes="[10, 20, 50, 100]"
-        layout="total, sizes, prev, pager, next, jumper"
-        :total="total"
-        @size-change="handleSizeChange"
-        @current-change="handleCurrentChange"
-      />
+      <div class="pagination-container">
+        <el-pagination v-model:current-page="currentPage" v-model:page-size="pageSize" :page-sizes="[10, 20, 50, 100]"
+          layout="total, sizes, prev, pager, next, jumper" :total="total" @size-change="handleSizeChange"
+          @current-change="handleCurrentChange" />
+      </div>
     </div>
   </div>
 
@@ -177,15 +174,15 @@ const handleSearch = () => {
   height: 100%;
   display: flex;
   flex-direction: column;
+  padding: 20px;
 }
 
 .node-nav {
-  height: 60px;
+  padding-bottom: 15px;
   display: flex;
   flex-direction: row;
   justify-content: flex-end;
   align-items: center;
-  padding: 0 20px;
 }
 
 .operation-bar {
@@ -215,10 +212,23 @@ const handleSearch = () => {
   color: #79bbff;
 }
 
+.el-table {
+  flex: 1;
+  overflow: auto;
+}
+
+
 .pagination-container {
-  margin-top: 20px;
+  padding: 15px 0;
   display: flex;
   justify-content: flex-end;
-  padding-right: 20px;
+  background-color: #fff;
+}
+
+.job-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: auto;
 }
 </style>

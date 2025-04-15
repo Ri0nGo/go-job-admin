@@ -245,7 +245,7 @@ const handleSubmit = async () => {
         emit('refresh') // 通知父组件刷新数据
       } catch (error) {
         console.error('创建失败:', error)
-        ElMessage.error('创建失败，请重试')
+        // ElMessage.error('创建失败，请重试')
       } finally {
         loading.value = false
       }
