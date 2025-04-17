@@ -227,7 +227,6 @@ const handleFileChange = async (file) => {
       name: res.filename,
       status:'success'
     }]
-    ElMessage.success('文件上传成功')
   } catch (error) {
     console.error('文件上传失败:', error)
   }
@@ -261,7 +260,6 @@ const handleSubmit = async () => {
         emit('refresh') // 通知父组件刷新数据
       } catch (error) {
         console.error('更新失败:', error)
-        ElMessage.error('更新失败，请重试')
       } finally {
         loading.value = false
       }
