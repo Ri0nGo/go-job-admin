@@ -24,10 +24,12 @@
 import { ref, reactive, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { login } from '../apis/users'
+import { useUserStore } from '../stores/user'
 
 const router = useRouter()
 const loading = ref(false)
 const loginFormRef = ref()
+const userStore = useUserStore()
 
 onMounted(() => {
     const token = localStorage.getItem('token')
@@ -61,7 +63,10 @@ const handleLogin = async () => {
             try {
                 // 先设置token再跳转
                 await login(loginForm).then((response) => {
-                    console.log('response:', response)
+                    // 将用户ID存储到Pinia
+                    if (response && response.id) {
+                        userStore.setUserId(response.id)
+                    }
                 })
                 // 添加延迟确保token设置完成
                 await new Promise(resolve => setTimeout(resolve, 50))

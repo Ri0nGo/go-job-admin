@@ -5,10 +5,13 @@ import 'element-plus/dist/index.css'
 import ElementPlus from 'element-plus'
 import zhCn from 'element-plus/es/locale/lang/zh-cn' // 中文包
 import router from './router'
+import { createPinia } from 'pinia'
 
+const pinia = createPinia()
 const app = createApp(App)
 app.use(ElementPlus, {
     locale: zhCn,
 })
 app.use(router)
+app.use(pinia)
 app.mount('#app')

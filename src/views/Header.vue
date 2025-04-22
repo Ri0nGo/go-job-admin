@@ -16,21 +16,48 @@
                 </span>
                 <template #dropdown>
                     <el-dropdown-menu>
-                        <el-dropdown-item>个人信息</el-dropdown-item>
+                        <el-dropdown-item @click="handleViewUserInfo">个人信息</el-dropdown-item>
                         <el-dropdown-item>修改密码</el-dropdown-item>
+                        <el-dropdown-item @click="bindEmailDialogRef.dialogVisible = true">绑定邮箱</el-dropdown-item>
                         <el-dropdown-item divided @click="handleLogout">退出登录</el-dropdown-item>
                     </el-dropdown-menu>
                 </template>
             </el-dropdown>
         </div>
     </el-header>
+    <BindEmailDialog ref="bindEmailDialogRef" />
+    <UserInfoDialog ref="userInfoDialogRef" />
 </template>
 
 <script setup>
 import { User, CaretBottom } from '@element-plus/icons-vue'
 import { useRouter } from 'vue-router'
+import { ref } from 'vue'
+import { useUserStore } from '@/stores/user'
+import { getUser } from '@/apis/users'
+import BindEmailDialog from '@/components/users/BindEmailDialog.vue'
+import UserInfoDialog from '@/components/users/UserInfoDialog.vue'
 
 const router = useRouter()
+const userStore = useUserStore()
+const bindEmailDialogRef = ref(null)
+const userInfoDialogRef = ref(null)
+
+const handleViewUserInfo = async () => {
+    const userId = userStore.getUserId
+    console.log(userId)
+    if (userId) {
+        try {
+            const response = await getUser(userId)
+            if (response) {
+                userInfoDialogRef.value.userInfo = response
+                userInfoDialogRef.value.dialogVisible = true
+            }
+        } catch (error) {
+            console.error('获取用户信息失败:', error)
+        }
+    }
+}
 
 const handleLogout = () => {
     localStorage.removeItem('token')

@@ -51,3 +51,21 @@ export function deleteUser(id) {
         method: 'delete',
     })
 }
+
+export function sendEmailCode(email) {
+    return service({
+        url: `/users/bind/email/code_send`,
+        method: 'post',
+        data: {
+            email,
+        },
+    })
+}
+
+export function bindEmail(data) {
+    return service({
+        url: `/users/bind/email`,
+        method: 'post',
+        data,
+    })
+}
