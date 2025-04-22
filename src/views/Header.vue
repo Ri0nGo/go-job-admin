@@ -9,7 +9,7 @@
                     <el-icon>
                         <User />
                     </el-icon>
-                    <span style="color: #333;">admin</span>
+                    <span style="color: #333;">{{ userStore.username || 'unknown' }}</span>
                     <el-icon>
                         <CaretBottom />
                     </el-icon>
@@ -45,7 +45,6 @@ const userInfoDialogRef = ref(null)
 
 const handleViewUserInfo = async () => {
     const userId = userStore.getUserId
-    console.log(userId)
     if (userId) {
         try {
             const response = await getUser(userId)

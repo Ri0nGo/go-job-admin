@@ -14,9 +14,6 @@
             </template>
             <div class="info-content">
                 <el-descriptions :column="2" border>
-                    <el-descriptions-item label="用户ID">
-                        {{ userInfo.id }}
-                    </el-descriptions-item>
                     <el-descriptions-item label="用户名">
                         {{ userInfo.username }}
                     </el-descriptions-item>

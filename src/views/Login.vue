@@ -63,9 +63,10 @@ const handleLogin = async () => {
             try {
                 // 先设置token再跳转
                 await login(loginForm).then((response) => {
-                    // 将用户ID存储到Pinia
+                    // 将用户ID和用户名存储到Pinia
                     if (response && response.id) {
                         userStore.setUserId(response.id)
+                        userStore.setUsername(loginForm.username)
                     }
                 })
                 // 添加延迟确保token设置完成
