@@ -2,9 +2,10 @@
   <el-dialog
     v-model="dialogVisible"
     title="编辑任务"
-    width="500px"
+    width="600px"
     :close-on-click-modal="false"
     :before-close="handleClose"
+    class="job-edit-dialog"
   >
     <el-form :model="form" :rules="rules" ref="formRef" label-width="100px" label-position="right">
       <el-form-item label="任务名称" prop="name">
@@ -61,6 +62,31 @@
         />
         <span class="status-text">{{ form.active === 1 ? '启用' : '停用' }}</span>
       </el-form-item>
+
+      <el-form-item label="启用通知" prop="notify_enabled">
+        <el-switch
+          v-model="form.notify_enabled"
+          :active-value="1"
+          :inactive-value="2"
+          style="--el-switch-on-color: #13ce66; --el-switch-off-color: #ececec"
+        />
+      </el-form-item>
+
+      <template v-if="form.notify_enabled === 1">
+        <el-form-item label="通知策略" prop="notify_strategy">
+          <el-radio-group v-model="form.notify_strategy">
+            <el-radio :label="1">成功后通知</el-radio>
+            <el-radio :label="2">失败后通知</el-radio>
+            <el-radio :label="3">总是通知</el-radio>
+          </el-radio-group>
+        </el-form-item>
+
+        <el-form-item label="通知方式" prop="notify_type">
+          <el-checkbox-group v-model="form.notify_types">
+            <el-checkbox :label="1">邮件</el-checkbox>
+          </el-checkbox-group>
+        </el-form-item>
+      </template>
     </el-form>
     
     <template #footer>
@@ -124,7 +150,10 @@ const form = reactive({
   active: 1,
   file: null,
   filename: '',
-  file_key: ''
+  file_key: '',
+  notify_enabled: 2,
+  notify_strategy: 1,
+  notify_types: []
 })
 
 const nodes = ref([])
@@ -154,6 +183,12 @@ const rules = {
   ],
   cron_expr: [
     { required: true, message: '请输入Cron表达式', trigger: 'blur' }
+  ],
+  notify_strategy: [
+    { required: true, message: '请选择通知策略', trigger: 'change' }
+  ],
+  notify_types: [
+    { required: true, message: '请选择通知方式', trigger: 'change', type: 'array' }
   ]
 }
 
@@ -269,6 +304,23 @@ const handleSubmit = async () => {
 </script>
 
 <style scoped>
+.job-edit-dialog :deep(.el-dialog) {
+  margin-top: 2vh !important;
+}
+
+.job-edit-dialog :deep(.el-form-item) {
+  margin-bottom: 18px;
+}
+
+.job-edit-dialog :deep(.el-radio-group) {
+  display: flex;
+  gap: 15px;
+}
+
+.job-edit-dialog :deep(.el-checkbox-group) {
+  display: flex;
+  gap: 15px;
+}
 .dialog-footer {
   display: flex;
   justify-content: flex-end;

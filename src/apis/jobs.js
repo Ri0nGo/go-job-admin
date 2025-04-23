@@ -10,6 +10,13 @@ export function getJobs(params = defaultPageSize) {
     })
 }
 
+export function getJob(id) {
+    return service({
+        url: `/jobs/${id}`,
+        method: 'get',
+    })
+}
+
 // 创建job
 export function createJob(data) {
     return service({
