@@ -1,7 +1,7 @@
 import router from './index.js'
 import {useUserStore} from "../store/index.js";
 
-const hasGetInfo = false;
+let hasGetInfo = false;
 
 export const setupRouterGuard = () => {
     // 鉴权前置路由
@@ -29,7 +29,13 @@ function createPermissionGuard(router) {
         }
 
         if (token && !hasGetInfo) {
-            await userStore.getUserInfo();
+            try{
+                await userStore.getUserInfo();
+                hasGetInfo = true;
+            }catch(err){
+                console.log("get user info err:", err);
+            }
+
         }
 
         next();

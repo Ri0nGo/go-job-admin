@@ -9,7 +9,7 @@ import Menu from "@/pages/menu/menu.vue"
       <Header/>
     </el-header>
     <el-container>
-      <el-aside>
+      <el-aside width="250px">
         <Menu/>
       </el-aside>
       <el-main class="main">
@@ -20,15 +20,9 @@ import Menu from "@/pages/menu/menu.vue"
 </template>
 
 <style scoped>
-.main {
-  overflow-y: auto;
-  overflow-x: hidden;
-  height: 100%;
-  position: fixed;
-  top: 65px;
-  left: 250px;
-  right: 0;
-  bottom: 0;
-  background-color: #ececec;
+.main{
+  height: calc(100vh - 65px);
+  padding: 20px;
+  background-color: #eee;
 }
 </style>

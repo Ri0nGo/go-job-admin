@@ -43,7 +43,7 @@ const formData = ref({           // 用于管理表单数据
 const onSubmit = () => {
   formDrawerRef.value.showLoading()
   // TODO 发送修改密码请求
-  console.log(formData.value)
+
   formDrawerRef.value.closeLoading()
   formDrawerRef.value.closeDrawer()
 }

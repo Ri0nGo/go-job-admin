@@ -76,6 +76,13 @@ const defaultActive = ref(route.path)
   bottom: 0;
   background-color: white;
 }
+.menu-container::-webkit-scrollbar{
+  width: 0;
+}
+
+.menu-box{
+  border: 0;
+}
 
 .el-menu-item {
   margin: 2px 15px;
