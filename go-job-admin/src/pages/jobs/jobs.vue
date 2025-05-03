@@ -270,9 +270,9 @@ const handleCurrentChange = async (val) => {
             class="table-column"
             :header-cell-style="{background: '#EAF3FB', color: '#2C3E50'}"
         >
-          <el-table-column align="center" prop="name" label="任务名称"/>
-          <el-table-column align="center" prop="node_name" label="工作节点"/>
-          <el-table-column align="center" label="执行方式" width="120">
+          <el-table-column align="center" prop="name" sortable label="任务名称"/>
+          <el-table-column align="center" prop="node_name" sortable label="工作节点"/>
+          <el-table-column align="center" label="执行方式" sortable width="120">
             <template #default="scope">
               <div class="code-block">
                 {{ formatExecType(scope.row.exec_type) }}
@@ -286,7 +286,7 @@ const handleCurrentChange = async (val) => {
               </div>
             </template>
           </el-table-column>
-          <el-table-column align="center" label="状态" width="120">
+          <el-table-column align="center" label="状态" sortable :sort-by="row => row.active" width="120">
             <template #default="scope">
               <el-switch
                   v-model="scope.row.active"
@@ -297,7 +297,7 @@ const handleCurrentChange = async (val) => {
               />
             </template>
           </el-table-column>
-          <el-table-column align="center" prop="created_time" label="创建时间">
+          <el-table-column align="center" prop="created_time" sortable label="创建时间">
             <template #default="scope">
               {{ dayjs(scope.row.created_time).format('YYYY-MM-DD HH:mm') }}
             </template>
