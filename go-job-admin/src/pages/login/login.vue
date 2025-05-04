@@ -59,7 +59,8 @@ const rules = {
           <el-input :prefix-icon="User" v-model="formData.username" placeholder="请输入账号"/>
         </el-form-item>
         <el-form-item prop="password" class="login-input">
-          <el-input :prefix-icon="Lock" v-model="formData.password" type="password" placeholder="请输入密码"/>
+          <el-input :prefix-icon="Lock" v-model="formData.password" type="password" show-password
+                    placeholder="请输入密码"/>
         </el-form-item>
         <el-form-item>
           <el-button

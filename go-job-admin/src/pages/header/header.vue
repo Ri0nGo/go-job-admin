@@ -4,10 +4,13 @@ import {useUserStore} from "../../store/index.js";
 import router from "../../router/index.js";
 import FormDrawer from "../../components/formDrawer/formDrawer.vue";
 import {ref} from "vue";
+import {bindEmail, getUser, sendEmailCode} from "../../apis/user/user.js";
+import {ElMessage, ElNotification} from "element-plus";
+import {notify} from "../../utils/notification.js";
 
 const userStore = useUserStore();
 
-// ---------- 子组件相关 ---------- //
+// ---------- 修改密码子组件相关 ---------- //
 const rules = {
   oldpassword: [
     {
@@ -39,7 +42,6 @@ const formData = ref({           // 用于管理表单数据
   repassword: ""
 })
 
-
 const onSubmit = () => {
   formDrawerRef.value.showLoading()
   // TODO 发送修改密码请求
@@ -62,7 +64,67 @@ const handleUserOperation = async (cmd) => {
       return
     case "changePassword":
       formDrawerRef.value.openDrawer();
+      return
+    case "bindEmail":
+      dialogFormVisible.value = true;
   }
+}
+
+
+// ---------- 绑定邮箱相关 ---------- //
+const dialogFormVisible = ref(null)
+const codeTime = ref(0)
+const bindEmailLoading = ref(false)
+const emailFormData = ref({
+  email: "",
+  code: ""
+})
+
+const onBindEmail = async () => {
+  dialogFormVisible.value = true;
+  bindEmailLoading.value = true;
+  try {
+    await bindEmail(emailFormData.value)
+    dialogFormVisible.value = false;
+    await userStore.getUserInfo()
+    notify("绑定邮箱成功")
+  } finally {
+    bindEmailLoading.value = false;
+  }
+
+}
+
+// 验证邮箱地址
+function isValidEmail(email) {
+  const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+  return emailRegex.test(email);
+}
+
+// ---------- 发送验证码倒计时 ---------- //
+let timer = null
+const onSendCode = async () => {
+  if (codeTime.value > 0) return
+
+  if (!emailFormData.value.email) {
+    ElMessage.error("邮箱地址不能为空")
+    return
+  }
+  if (!isValidEmail(emailFormData.value.email)) {
+    ElMessage.error("请输入一个有效的邮箱地址")
+    return
+  }
+
+  // 在这里调用你的发送验证码接口
+  sendEmailCode(emailFormData.value.email)
+
+  codeTime.value = 60
+  timer = setInterval(() => {
+    codeTime.value--
+    if (codeTime.value <= 0) {
+      clearInterval(timer)
+      timer = null
+    }
+  }, 1000)
 }
 
 </script>
@@ -84,6 +146,7 @@ const handleUserOperation = async (cmd) => {
         <template #dropdown>
           <el-dropdown-menu>
             <el-dropdown-item command="changePassword">修改密码</el-dropdown-item>
+            <el-dropdown-item command="bindEmail">绑定邮箱</el-dropdown-item>
             <el-dropdown-item command="logout">退出登录</el-dropdown-item>
           </el-dropdown-menu>
         </template>
@@ -115,6 +178,42 @@ const handleUserOperation = async (cmd) => {
     </el-form>
   </FormDrawer>
 
+  <!--  绑定邮箱-->
+  <el-dialog v-model="dialogFormVisible" :show-close="false" header="标题" width="420">
+    <div class="email-header">
+      <div class="email-title">绑定邮箱</div>
+      <span class="email-title-tip">绑定邮箱可以提高账号安全性，便于接收重要通知</span>
+      <span style="margin-top: 5px; font-size: 12px" v-if="userStore.userInfo?.email">tip: 您以绑定过邮箱，邮箱地址: {{ userStore.userInfo?.email }}</span>
+    </div>
+
+    <el-form :model="emailFormData" class="email-main">
+      <div class="email-addr-box">
+        <div class="email-label">邮箱地址</div>
+        <el-input style="height: 42px" v-model="emailFormData.email" autocomplete="off"/>
+
+      </div>
+      <div class="email-code-box">
+        <div class="email-label">验证码</div>
+        <div class="email-code">
+          <el-input style="height: 42px" v-model="emailFormData.code" autocomplete="off"/>
+          <el-button
+              class="send-email-code"
+              :disabled="codeTime > 0"
+              :class="{'code-is-disabled': codeTime > 0 }"
+              @click="onSendCode"
+          >{{ codeTime > 0 ? `${codeTime}s后重发` : '发送验证码' }}
+          </el-button>
+        </div>
+      </div>
+
+    </el-form>
+    <div class="footer">
+      <el-button class="btn-bind-email" :loading="bindEmailLoading" @click="onBindEmail">绑定邮箱</el-button>
+      <el-button @click=" dialogFormVisible=false">
+        暂不绑定
+      </el-button>
+    </div>
+  </el-dialog>
 </template>
 
 <style scoped>
@@ -159,6 +258,98 @@ const handleUserOperation = async (cmd) => {
   color: #333;
   margin-right: 5px;
 }
+
+/* 邮箱相关样式 */
+.email-header {
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  margin-bottom: 22px;
+}
+
+.email-title {
+  font-size: 26px;
+  font-weight: 700;
+  margin-bottom: 14px;
+  color: #333;
+}
+
+.email-title-tip {
+  font-size: 14px;
+  color: #555;
+}
+
+.email-main {
+  padding: 10px 20px 25px 20px;
+  display: flex;
+  flex-direction: column;
+}
+
+.email-label {
+  font-size: 14px;
+  font-weight: 700;
+  padding: 6px 0;
+  color: #555;
+}
+
+.email-addr-box {
+  margin-bottom: 20px;
+}
+
+.email-code {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+}
+
+.send-email-code {
+  width: 100px;
+  height: 42px;
+  margin-left: 10px;
+  background-color: #f9f9f9;
+  color: cornflowerblue;
+}
+
+.send-email-code:hover {
+  background-color: #f3f4f5;
+}
+
+.code-is-disabled {
+  background-color: #ccc !important;
+  color: #899;
+}
+
+.footer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.btn-bind-email {
+  background-color: #4a90e2;
+  color: #fff;
+  font-size: 16px;
+}
+
+.footer .el-button:nth-child(2):hover {
+  background-color: #fff;
+  color: #666;
+}
+
+.btn-bind-email:hover {
+  background-color: #3a7bc8;
+  color: #fff;
+}
+
+.footer .el-button {
+  width: 90%;
+  height: 42px;
+  margin: 10px 20px;
+  border: none;
+  border-radius: 8px;
+}
+
 
 /*浏览器默认的焦点样式（outline）导致的*/
 .el-dropdown * {

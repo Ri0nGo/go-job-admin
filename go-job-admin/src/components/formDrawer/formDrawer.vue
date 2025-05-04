@@ -73,6 +73,7 @@ defineExpose({
       </div>
     </div>
   </el-drawer>
+
 </template>
 
 <style scoped>
@@ -92,6 +93,11 @@ defineExpose({
   width: 100%;
   height: 100%;
   overflow: auto;
+}
+
+/* 移除右侧的滚动条 */
+.drawer-body::-webkit-scrollbar {
+  width: 0px;
 }
 
 .form-submit{

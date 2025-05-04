@@ -52,6 +52,7 @@ export function deleteUser(id) {
     })
 }
 
+// 发送邮箱验证码
 export function sendEmailCode(email) {
     return service({
         url: `/users/bind/email/code_send`,
@@ -62,6 +63,7 @@ export function sendEmailCode(email) {
     })
 }
 
+// 绑定邮箱验证码
 export function bindEmail(data) {
     return service({
         url: `/users/bind/email`,

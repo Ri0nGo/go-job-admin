@@ -1,7 +1,8 @@
 <script setup>
-import {Plus, UploadFilled} from "@element-plus/icons-vue";
+import {Plus, UploadFilled, Bell} from "@element-plus/icons-vue";
 import dayjs from "dayjs";
 import FormDrawer from "../../components/formDrawer/formDrawer.vue";
+import {useUserStore} from "../../store/index.js";
 import {onMounted, ref} from "vue";
 import {getNodes} from "../../apis/node/node.js";
 import {ElMessage} from "element-plus";
@@ -10,8 +11,8 @@ import DefaultPagination from "../../components/pagination/defaultPagination.vue
 
 // ---------- 初始化任务列表数据 ---------- //
 const tableData = ref([]);
-// 加载状态
 const loading = ref(false)
+const userStore = useUserStore()
 
 // 获取任务列表数据
 const fetchJobs = async () => {
@@ -47,8 +48,8 @@ const defaultFormData = {
   filename: null,
   file_key: null,
   notify_status: null,   // 通知状态，1启用；2停用
-  notify_strategy: null, // 通知策略；1成功后通知，2失败后通知，3总是通知
-  notify_type: null,     // 通知类型；1邮箱
+  notify_strategy: 2, // 通知策略；1成功后通知，2失败后通知，3总是通知
+  notify_type: 1,     // 通知类型；1邮箱
   notify_mark: null,     // 邮箱地址标志
 }
 const formData = ref({...defaultFormData});
@@ -102,7 +103,7 @@ const loadNodes = async () => {
     nodes.value = res.data
   } catch (error) {
     console.error('获取节点列表失败:', error)
-    ElMessage.error('获取节点列表失败: ' + error)
+    ElMessage.error(error?.message || '网络异常')
   }
 }
 
@@ -115,6 +116,7 @@ const onSubmit = async () => {
     }
   }
 
+  // 校验文件是否上传
   if (
       formData.value.exec_type === 3 &&
       fileList.value.length === 0
@@ -123,7 +125,15 @@ const onSubmit = async () => {
     return
   }
 
+  // 校验通知
+  if (formData.value.notify_type === 1 && !userStore.userInfo?.email) {
+    ElMessage.error("请先绑定邮箱才可以发送通知哦~")
+    return
+  }
+
+  formData.value.notify_mark = userStore.userInfo.email
   formDrawerRef.value.showLoading()
+  console.log("form data:", formData.value)
   try {
     await (operationId.value === 0 ? createJob(formData.value) : updateJob(formData.value))
     await fetchJobs()
@@ -159,7 +169,6 @@ const handleStatusChange = (row) => {
   resetForm(row)
   operationId.value = row.id
   onSubmit()
-  fetchJobs()
 }
 
 // ---------- 按钮点击事件处理 ---------- //
@@ -254,6 +263,13 @@ const handleCurrentChange = async (val) => {
 
 }
 
+// ---------- 通知处理 ---------- //
+const notifyStrategyOptions = [
+  {label: '成功后通知', value: 1},
+  {label: '失败后通知', value: 2},
+  {label: '总是通知', value: 3},
+]
+
 
 </script>
 
@@ -335,7 +351,7 @@ const handleCurrentChange = async (val) => {
         ref="formRef"
         :rules="rules"
         :model="formData"
-        label-width="80px"
+        label-width="100px"
         class="mt-2">
 
       <el-form-item label="任务名称" prop="name">
@@ -382,13 +398,50 @@ const handleCurrentChange = async (val) => {
         <el-input class="cron-expr-stype" v-model="formData.cron_expr" placeholder="秒 分 时 日 月 周"/>
         <div class="cron-tip">示例：0 */10 * * * * （每十分钟执行）</div>
       </el-form-item>
-      <el-form-item label="状态" prop="active">
+      <el-form-item label="任务状态" prop="active">
         <el-switch
             v-model="formData.active"
             :active-value="1"
             :inactive-value="2"
             style="--el-switch-on-color: #13ce66; --el-switch-off-color: #ececec"
         />
+      </el-form-item>
+      <el-form-item label="通知设置">
+        <template #label>
+          <div style="display: inline-flex; align-items: center;">
+            <el-icon style="margin-right: 4px;">
+              <Bell/>
+            </el-icon>
+            <span>通知设置</span>
+          </div>
+        </template>
+
+        <el-switch
+            v-model="formData.notify_status"
+            :active-value="1"
+            :inactive-value="2"
+            style="--el-switch-on-color: #13ce66; --el-switch-off-color: #ececec"
+        />
+      </el-form-item>
+      <el-form-item v-if="formData.notify_status===1">
+        <div class="notify">
+          <div class="notify-strategy">
+            <!-- user-select: none 可以防止点击Switch时，浏览器自动聚焦到文字上 -->
+            <span style="color: #666; user-select: none;">通知策略</span>
+            <el-radio-group v-model="formData.notify_strategy">
+              <el-radio-button
+                  v-for="(item, index) in notifyStrategyOptions"
+                  :key="item.value"
+                  :label="item.label"
+                  :value="item.value"
+              />
+            </el-radio-group>
+          </div>
+          <div class="notify-type">
+            <div class="notify-tip" v-if="userStore.userInfo?.email">注：默认发送到当前用户邮箱</div>
+            <div class="notify-tip" v-else>无法发送邮件通知，请先绑定邮箱</div>
+          </div>
+        </div>
       </el-form-item>
     </el-form>
   </FormDrawer>
@@ -455,6 +508,42 @@ const handleCurrentChange = async (val) => {
   font-size: 12px;
   color: #666;
 }
+
+/* --------  通知相关样式 -------- */
+.notify{
+  display: flex;
+  align-items: flex-start;
+  flex-direction: column;
+}
+.notify-strategy {
+  padding: 2px 8px;
+  border-radius: 8px;
+  background-color: #f6f6f6;
+}
+
+.notify-strategy .el-radio-group {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  padding-bottom: 5px;
+}
+
+.notify-type {
+  margin-top: 10px;
+  padding: 2px 8px;
+  border-radius: 8px;
+  background-color: #f6f6f6;
+}
+
+.notify-type .el-radio-group {
+  padding-bottom: 5px;
+}
+
+.notify-tip {
+  font-size: 12px;
+  color: #666;
+}
+
 
 /* --------  表头相关样式修改 -------- */
 /* 表头左上角、右上角圆角处理 */
