@@ -108,7 +108,7 @@ onMounted(() =>{
 .node-body{
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-  gap: 20px;
+  gap: 28px;
   margin: 20px 0;
 }
 
