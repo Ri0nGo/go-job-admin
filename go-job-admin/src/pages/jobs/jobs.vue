@@ -3,11 +3,12 @@ import {Plus, UploadFilled, Bell} from "@element-plus/icons-vue";
 import dayjs from "dayjs";
 import FormDrawer from "../../components/formDrawer/formDrawer.vue";
 import {useUserStore} from "../../store/index.js";
-import {onMounted, ref} from "vue";
+import {nextTick, onMounted, ref} from "vue";
 import {getNodes} from "../../apis/node/node.js";
 import {ElMessage} from "element-plus";
 import {createJob, deleteJob, getJobs, updateJob, uploadJobFile} from "../../apis/job/job.js";
 import DefaultPagination from "../../components/pagination/defaultPagination.vue";
+import Log from "../logs/log.vue";
 
 // ---------- 初始化任务列表数据 ---------- //
 const tableData = ref([]);
@@ -133,7 +134,6 @@ const onSubmit = async () => {
 
   formData.value.notify_mark = userStore.userInfo.email
   formDrawerRef.value.showLoading()
-  console.log("form data:", formData.value)
   try {
     await (operationId.value === 0 ? createJob(formData.value) : updateJob(formData.value))
     await fetchJobs()
@@ -270,6 +270,19 @@ const notifyStrategyOptions = [
   {label: '总是通知', value: 3},
 ]
 
+// ---------- 日志处理 ---------- //
+const logRef = ref(null)
+const currentJobId = ref(0)
+const currentJobName = ref("")
+
+const handleLog = async (row) => {
+  currentJobId.value = row.id
+  currentJobName.value = row.name
+  await nextTick()
+  await logRef.value.openDrawer()
+
+}
+
 
 </script>
 
@@ -324,7 +337,7 @@ const notifyStrategyOptions = [
                 编辑
               </el-button>
               <el-button link type="primary" size="default" @click="handleDelete(scope.row)">删除</el-button>
-              <el-button link type="primary" size="default">日志</el-button>
+              <el-button link type="primary" size="default" @click="handleLog(scope.row)">日志</el-button>
             </template>
           </el-table-column>
         </el-table>
@@ -445,6 +458,9 @@ const notifyStrategyOptions = [
       </el-form-item>
     </el-form>
   </FormDrawer>
+
+  <Log ref="logRef" :job-id="currentJobId" :job-name="currentJobName"/>
+
 </template>
 
 <style scoped>
