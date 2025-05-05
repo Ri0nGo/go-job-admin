@@ -5,6 +5,7 @@ import {getJobRecord, getJobRecords} from "../../apis/jobRecord/jobRecord.js";
 import dayjs from "dayjs";
 import {formatTime} from "../../utils/time.js";
 import DefaultPagination from "../../components/pagination/defaultPagination.vue";
+import {RefreshRight} from "@element-plus/icons-vue"
 
 const outerDrawer = ref(false);
 const innerDrawer = ref(false);
@@ -82,6 +83,12 @@ const fetchJobRecords = async () => {
   tmpListData.value = res.data
   logListData.value = res.data
   total.value = res.total
+}
+
+const onRefresh = async () => {
+  loading.value = true
+  await fetchJobRecords()
+  loading.value = false
 }
 
 // ---------- 抽屉操作 ---------- //
@@ -186,22 +193,29 @@ const handleCurrentChange = async (val) => {
   >
     <div class="drawer-container">
       <div class="log-header">
-        <span style="margin-right: 8px;font-size: 16px; color: #666">运行状态</span>
-        <el-select
-            v-model="selectStatusValue"
-            clearable
-            placeholder="请选择"
-            style="width: 120px"
-            @change="handleSelectStatus"
-            size=""
-        >
-          <el-option
-              v-for="item in statusOptions"
-              :key="item.value"
-              :label="item.label"
-              :value="item.value"
-          />
-        </el-select>
+        <div class="header-left">
+          <span style="margin-right: 8px;font-size: 16px; color: #666">运行状态</span>
+          <el-select
+              v-model="selectStatusValue"
+              clearable
+              placeholder="请选择"
+              style="width: 120px"
+              @change="handleSelectStatus"
+              size=""
+          >
+            <el-option
+                v-for="item in statusOptions"
+                :key="item.value"
+                :label="item.label"
+                :value="item.value"
+            />
+          </el-select>
+        </div>
+        <div class="header-right">
+          <el-icon @click="onRefresh" style="width: 18px;cursor: pointer;">
+            <RefreshRight/>
+          </el-icon>
+        </div>
       </div>
       <div class="log-body">
         <el-table
@@ -210,6 +224,7 @@ const handleCurrentChange = async (val) => {
             class="table-column"
             :header-cell-style="{background: '#EAF3FB', color: '#2C3E50'}"
             height="calc(100% - 20px)"
+            :loading="loading"
         >
           <el-table-column align="center" label="开始时间">
             <template #default="scope">
@@ -255,7 +270,6 @@ const handleCurrentChange = async (val) => {
         <!--        内部日志详情抽屉框-->
         <el-drawer
             v-model="innerDrawer"
-
             :append-to-body="true"
             :with-header="false"
             class="drawer-inner"
@@ -264,10 +278,12 @@ const handleCurrentChange = async (val) => {
             <div class="detail-title">
               <div class="log-detail-title">
                 <div style="font-size: 18px; color: #333; font-weight: 700">日志详情&nbsp;# {{ logDetailData.id }}</div>
-                <div class="detail-status" :class="statusClass(logDetailData.status)">{{ formatStatus(logDetailData.status) }}</div>
+                <div class="detail-status" :class="statusClass(logDetailData.status)">
+                  {{ formatStatus(logDetailData.status) }}
+                </div>
               </div>
               <div class="detail-header-bottom">
-                <div>任务名称: {{ props.jobName}}</div>
+                <div>任务名称: {{ props.jobName }}</div>
                 <div>执行时长: {{ logDetailData.duration?.toFixed(3) }}秒</div>
               </div>
             </div>
@@ -278,15 +294,15 @@ const handleCurrentChange = async (val) => {
                 <div class="info-grid">
                   <div class="info-item">
                     <div class="info-label">开始时间</div>
-                    <div class="info-value">{{formatTime(logDetailData.start_time)}}</div>
+                    <div class="info-value">{{ formatTime(logDetailData.start_time) }}</div>
                   </div>
                   <div class="info-item">
                     <div class="info-label">结束时间</div>
-                    <div class="info-value">{{formatTime(logDetailData.end_time)}}</div>
+                    <div class="info-value">{{ formatTime(logDetailData.end_time) }}</div>
                   </div>
                   <div class="info-item">
                     <div class="info-label">下次执行时间</div>
-                    <div class="info-value">{{formatTime(logDetailData.next_time)}}</div>
+                    <div class="info-value">{{ formatTime(logDetailData.next_time) }}</div>
                   </div>
                   <div class="info-item">
                     <div class="info-label">执行时长</div>
@@ -296,13 +312,13 @@ const handleCurrentChange = async (val) => {
               </div>
               <div class="base-item">
                 <h2 class="section-title">输出内容</h2>
-                <div class="output-content">{{logDetailData.output}}</div>
+                <div class="output-content">{{ logDetailData.output }}</div>
               </div>
               <div class="base-item">
                 <h2 class="section-title">错误信息</h2>
                 <div class="error-content">
                   <span class="empty-error" v-if="!logDetailData.error">无错误信息</span>
-                  <span class="empty-error" v-else>{{logDetailData.error}}</span>
+                  <span class="empty-error" v-else>{{ logDetailData.error }}</span>
                 </div>
               </div>
             </div>
@@ -335,12 +351,15 @@ const handleCurrentChange = async (val) => {
   align-items: center;
   justify-content: flex-start;
   height: 44px;
-  width: 100%;
   border-radius: 8px;
   background-color: #f9f9f9;
   margin: 10px 0;
   padding: 0 10px;
   flex-shrink: 0; /* 防止header被压缩 */
+}
+
+.header-left {
+  margin-right: auto;
 }
 
 .log-body {
@@ -355,6 +374,9 @@ const handleCurrentChange = async (val) => {
   justify-content: flex-end;
 }
 
+.table-column {
+  user-select: none;
+}
 
 /* 日志详情样式 */
 

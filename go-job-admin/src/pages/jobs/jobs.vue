@@ -133,6 +133,7 @@ const onSubmit = async () => {
   }
 
   formData.value.notify_mark = userStore.userInfo.email
+  console.log(formData.value)
   formDrawerRef.value.showLoading()
   try {
     await (operationId.value === 0 ? createJob(formData.value) : updateJob(formData.value))
@@ -325,6 +326,11 @@ const handleLog = async (row) => {
                   @change="handleStatusChange(scope.row)"
               />
             </template>
+          </el-table-column>
+
+          <el-table-column align="center" label="通知" sortable
+                           :sort-by="row => row.notify_status" width="100"
+                           :formatter="(row) => +row.notify_status === 1 ? '启用' : +row.notify_status === 2 ? '停用' : ''">
           </el-table-column>
           <el-table-column align="center" prop="created_time" sortable label="创建时间">
             <template #default="scope">
@@ -526,11 +532,12 @@ const handleLog = async (row) => {
 }
 
 /* --------  通知相关样式 -------- */
-.notify{
+.notify {
   display: flex;
   align-items: flex-start;
   flex-direction: column;
 }
+
 .notify-strategy {
   padding: 2px 8px;
   border-radius: 8px;
