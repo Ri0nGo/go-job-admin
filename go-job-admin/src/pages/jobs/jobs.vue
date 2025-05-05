@@ -8,7 +8,7 @@ import {getNodes} from "../../apis/node/node.js";
 import {ElMessage} from "element-plus";
 import {createJob, deleteJob, getJobs, updateJob, uploadJobFile} from "../../apis/job/job.js";
 import DefaultPagination from "../../components/pagination/defaultPagination.vue";
-import Log from "../logs/log.vue";
+import JobRecord from "../jobRecords/jobRecord.vue";
 
 // ---------- 初始化任务列表数据 ---------- //
 const tableData = ref([]);
@@ -459,7 +459,7 @@ const handleLog = async (row) => {
     </el-form>
   </FormDrawer>
 
-  <Log ref="logRef" :job-id="currentJobId" :job-name="currentJobName"/>
+  <JobRecord ref="logRef" :job-id="currentJobId" :job-name="currentJobName"/>
 
 </template>
 
