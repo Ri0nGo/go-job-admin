@@ -4,7 +4,7 @@ WORKDIR /app
 
 RUN cd go-job-admin
 
-COPY package*.json ./
+COPY go-job-admin/package*.json ./
 
 RUN npm install
 
