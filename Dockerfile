@@ -2,11 +2,9 @@ FROM node:22.14 AS builder
 
 WORKDIR /app
 
-COPY go-job-admin/package*.json ./
+COPY go-job-admin/ ./
 
 RUN npm install
-
-COPY . .
 
 RUN npm run build
 
