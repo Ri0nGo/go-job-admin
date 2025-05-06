@@ -138,7 +138,7 @@ const rules = {
           </el-input>
         </div>
         <div class="box-right">
-          <el-button type="primary" :icon="Plus" @click="handleAddNode">新增任务</el-button>
+          <el-button type="primary" :icon="Plus" @click="handleAddNode">新增节点</el-button>
         </div>
       </div>
     </el-card>
@@ -171,7 +171,7 @@ const rules = {
 
     <FormDrawer
         ref="formDrawerRef"
-        :title="operationId === 0? '新增任务' : '修改任务'"
+        :title="operationId === 0? '新增节点' : '修改节点'"
         @submit="onSubmit"
         @close="onClose"
     >
