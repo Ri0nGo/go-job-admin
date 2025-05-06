@@ -133,7 +133,6 @@ const onSubmit = async () => {
   }
 
   formData.value.notify_mark = userStore.userInfo.email
-  console.log(formData.value)
   formDrawerRef.value.showLoading()
   try {
     await (operationId.value === 0 ? createJob(formData.value) : updateJob(formData.value))
@@ -177,6 +176,7 @@ const handleAdd = async () => {
   await loadNodes()
   operationId.value = 0
   resetForm()
+  formData.value = {...defaultFormData}
   formDrawerRef.value.openDrawer()
 }
 const handleEdit = async (row) => {
@@ -417,7 +417,7 @@ const handleLog = async (row) => {
         <el-input class="cron-expr-stype" v-model="formData.cron_expr" placeholder="秒 分 时 日 月 周"/>
         <div class="cron-tip">示例：0 */10 * * * * （每十分钟执行）</div>
       </el-form-item>
-      <el-form-item label="任务状态" prop="active">
+      <el-form-item label="状态" prop="active">
         <el-switch
             v-model="formData.active"
             :active-value="1"

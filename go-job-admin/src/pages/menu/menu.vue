@@ -63,7 +63,6 @@ const defaultActive = ref(route.path)
 </template>
 
 <style scoped>
-
 .menu-container {
   transition: all 0.2s;
   overflow-y: auto;
