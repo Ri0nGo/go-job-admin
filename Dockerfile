@@ -2,6 +2,8 @@ FROM node:22.14 AS builder
 
 WORKDIR /app
 
+RUN cd go-job-admin
+
 COPY package*.json ./
 
 RUN npm install
