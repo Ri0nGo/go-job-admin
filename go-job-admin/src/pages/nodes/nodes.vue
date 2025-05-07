@@ -232,7 +232,7 @@ const rules = {
 }
 
 .node-card:hover {
-  transform: scale(1.02);
+  transform: scale(1.01);
   box-shadow: 0 4px 12px rgba(43, 197, 50, 0.2); /* 鼠标悬浮更明显 */
   background-color: #f9f9f9; /* 柔和背景变化 */
 }
