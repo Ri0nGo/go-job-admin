@@ -8,6 +8,15 @@ import {notify} from "../../utils/notification.js";
 
 // ---------- 节点数据初始化 ---------- //
 const nodeData = ref(null)
+const formRef = ref(null)
+const formDrawerRef =ref(null)
+const operationId = ref(0)
+const initFormData = {
+  name: "",
+  description: "",
+  address: "",
+}
+const formData = ref({...initFormData})
 
 // ---------- 点击按钮 ---------- //
 const search = ref(null)
@@ -15,6 +24,7 @@ const search = ref(null)
 const handleAddNode = async () => {
   formDrawerRef.value.openDrawer()
   operationId.value = 0
+  resetForm()
 }
 const handleEditNode = async (row) => {
   formDrawerRef.value.openDrawer()
@@ -54,6 +64,8 @@ const resetForm = (row) => {
     for (const key in row) {
       formData.value[key] = row[key];
     }
+  }else{
+    formData.value = {...initFormData}
   }
 }
 
@@ -70,14 +82,6 @@ onBeforeUnmount(() => {
 });
 
 // ---------- 右侧新增，编辑抽屉 ---------- //
-const formRef = ref(null)
-const formDrawerRef =ref(null)
-const operationId = ref(0)
-const formData = ref({
-  name: "",
-  description: "",
-  address: "",
-})
 const onSubmit = async () => {
   if (formRef.value) {
     const valid = await formRef.value.validate()

@@ -140,4 +140,10 @@ const rules = {
   border: 1px solid #ccc;
 }
 
+.login-submit:hover {
+  width: 300px;
+  background-color: #85bc85;
+  border: 1px solid #ccc;
+}
+
 </style>

@@ -45,13 +45,13 @@ const defaultFormData = {
   node_id: null,
   exec_type: null,
   cron_expr: null,
-  active: true,
+  active: 2,
   filename: null,
   file_key: null,
-  notify_status: null,   // 通知状态，1启用；2停用
+  notify_status: 2,   // 通知状态，1启用；2停用
   notify_strategy: 2, // 通知策略；1成功后通知，2失败后通知，3总是通知
   notify_type: 1,     // 通知类型；1邮箱
-  notify_mark: null,     // 邮箱地址标志
+  notify_mark: "",     // 邮箱地址标志
 }
 const formData = ref({...defaultFormData});
 const resetForm = (row) => {
@@ -176,7 +176,8 @@ const handleAdd = async () => {
   await loadNodes()
   operationId.value = 0
   resetForm()
-  formData.value = {...defaultFormData}
+  Object.assign(formData.value, defaultFormData);
+  fileList.value = []
   formDrawerRef.value.openDrawer()
 }
 const handleEdit = async (row) => {
