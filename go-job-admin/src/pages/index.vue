@@ -23,6 +23,6 @@ import Menu from "@/pages/menu/menu.vue"
 .main{
   height: calc(100vh - 65px);
   padding: 20px;
-  background-color: #f6f6f6;
+  background-color: #f7f8fa;
 }
 </style>
