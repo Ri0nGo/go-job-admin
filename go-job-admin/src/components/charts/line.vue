@@ -1,6 +1,6 @@
 <template>
   <!-- chartRef 用于获取 DOM 元素引用，供 echarts.init 初始化使用。-->
-  <div ref="chartRef" class="chart-container"></div>
+  <div class="chart-container" ref="chartRef" style="height: 100%; width: 100%"></div>
 </template>
 
 <script setup>
@@ -54,8 +54,4 @@ watch(
 </script>
 
 <style scoped>
-.chart-container {
-  width: 100%;
-  height: 100%;
-}
 </style>

@@ -3,6 +3,12 @@ import {ref} from 'vue'
 import Line from '@/components/charts/line.vue'
 
 const chartOption = ref({
+  grid: {
+    left: '5%',   // 默认可能是 '10%' 或更大
+    right: '5%',  // 同样缩小右侧空隙
+    top: '20%',   // 视需要调整上下边距
+    bottom: '30%'
+  },
   title: {
     text: '折线图示例'
   },
@@ -75,20 +81,26 @@ const chartOption = ref({
       </el-card>
     </div>
     <div class="home-chart">
-      <el-card>
-        <div class="chart-wrapper">
-          <Line :option="chartOption" />
-        </div>
+      <el-card class="chart-card">
+        <Line :option="chartOption" />
       </el-card>
-      <el-card>图表2</el-card>
+      <el-card class="chart-card">
+        <Line :option="chartOption" />
+      </el-card>
     </div>
     <div class="home-table">
-
+      <el-card class="table-card"></el-card>
     </div>
   </div>
 </template>
 
 <style scoped>
+
+.home-box{
+  height: calc(100vh - 105px);
+  display: flex;
+  flex-direction: column;
+}
 
 /* ------ 顶部卡片样式 ------- */
 .home-top {
@@ -96,7 +108,7 @@ const chartOption = ref({
   grid-template-columns: repeat(auto-fit, minmax(250px, auto));
   justify-content: start;
   align-items: center;
-  gap: 1rem;
+  gap: 10px;
 }
 
 .card-top {
@@ -107,7 +119,6 @@ const chartOption = ref({
 
 .job-name {
   font-size: 19px;
-  margin-bottom: 16px;
   font-weight: 500;
   color: #494b4e;
 }
@@ -163,19 +174,30 @@ const chartOption = ref({
 }
 
 /* ----------- 中间图表样式 ----------- */
+
 .home-chart{
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-  justify-content: start;
-  align-items: center;
-  gap: 16px;
-  margin-top: 16px;
+  align-items: stretch; /* 让网格项（el-card）在交叉轴方向拉伸 */
+  gap: 10px;
+  flex: 2;
+  min-height: 0;
 }
 
-.chart-wrapper {
-  width: 100%; /* 容器宽度可以动态调整 */
-  height: 400px; /* 容器高度可以调整 */
-  margin: 0;
-  padding: 0;
+.chart-card {
+  margin-top: 10px;
+  height: 100%;
+}
+
+::v-deep(.el-card__body) {
+  height: 100%;
+}
+
+.home-table{
+  flex:3;
+}
+
+.table-card{
+  margin-top: 10px;
 }
 </style>
