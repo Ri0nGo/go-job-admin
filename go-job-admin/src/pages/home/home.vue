@@ -1,6 +1,6 @@
 <script setup>
 import {onMounted, ref} from 'vue'
-import Line from '@/components/charts/line.vue'
+import Chart from '@/components/charts/chart.vue'
 import dayjs from "dayjs";
 import {RefreshRight} from "@element-plus/icons-vue";
 import {formatJobStatus, getTagType} from "../../utils/text.js";
@@ -235,10 +235,10 @@ onMounted(() => {
     </div>
     <div class="home-chart">
       <el-card class="chart-card">
-        <Line :option="lineChartData"/>
+        <Chart :option="lineChartData"/>
       </el-card>
       <el-card class="chart-card">
-        <Line :option="barChartData"/>
+        <Chart :option="barChartData"/>
       </el-card>
     </div>
     <div class="home-table">

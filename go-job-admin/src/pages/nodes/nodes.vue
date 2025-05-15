@@ -1,6 +1,6 @@
 <script setup>
 
-import {Plus, Search} from "@element-plus/icons-vue";
+import {Plus, Search, MoreFilled, ElementPlus, Clock} from "@element-plus/icons-vue";
 import {onBeforeUnmount, onMounted, ref} from "vue";
 import {createNode, deleteNode, getNodes, updateNode} from "../../apis/node/node.js";
 import FormDrawer from "../../components/formDrawer/formDrawer.vue";
@@ -9,7 +9,7 @@ import {notify} from "../../utils/notification.js";
 // ---------- 节点数据初始化 ---------- //
 const nodeData = ref(null)
 const formRef = ref(null)
-const formDrawerRef =ref(null)
+const formDrawerRef = ref(null)
 const operationId = ref(0)
 const initFormData = {
   name: "",
@@ -36,7 +36,7 @@ const handleDeleteNode = async (row) => {
     await deleteNode(row.id)
     notify("删除成功")
     fetchNodes()
-  }catch(error) {
+  } catch (error) {
     console.log("删除节点错误:", error)
   }
 
@@ -64,7 +64,7 @@ const resetForm = (row) => {
     for (const key in row) {
       formData.value[key] = row[key];
     }
-  }else{
+  } else {
     formData.value = {...initFormData}
   }
 }
@@ -121,6 +121,32 @@ const rules = {
 }
 
 
+// ---------- 卡片头部右侧操作 ---------- //
+const handleMoreOperation = (cmd) => {
+  switch (cmd) {
+    case "install_ref":
+      dialogFormVisible.value = true
+      return
+  }
+}
+
+// ---------- 卡片头部右侧操作 - 安装依赖包 ---------- //
+const installRefData = ref({
+  pkg_name: "",
+  type: "py"
+})
+const dialogFormVisible = ref(false)
+const installRefLoading = ref(false)
+const installRefOptions = [
+  {
+    value: 'py',
+    label: 'Python',
+  },
+]
+const onInstallRef = () => {
+}
+
+
 </script>
 
 <template>
@@ -149,9 +175,29 @@ const rules = {
     <div class="node-body">
       <div class="node-col" v-for="node in nodeData" :key="node.id">
         <el-card :class="['node-card', node.online ? '' : 'offline-bgc']">
-          <div class="card-header">
-            <div :class="node.online ? 'online-status': 'offline-status'"></div>
-            <div :class="['online-text', node.online ? '' : 'offline-color']">{{ node.online ? '在线' : '离线' }}</div>
+          <div class="header-card">
+            <div class="header-left">
+              <div :class="node.online ? 'online-status': 'offline-status'"></div>
+              <div :class="['online-text', node.online ? '' : 'offline-color']">{{
+                  node.online ? '在线' : '离线'
+                }}
+              </div>
+            </div>
+            <div class="header-right">
+              <el-dropdown style="width: 32px" @command="handleMoreOperation">
+                <span class="el-dropdown-link">
+                  <el-icon style="font-size: 22px;">
+                    <MoreFilled/>
+                  </el-icon>
+                </span>
+                <template #dropdown>
+                  <el-dropdown-menu class="card-dropdown">
+                    <el-dropdown-item class="dropdown-item" command="install_ref">安装依赖包</el-dropdown-item>
+                    <el-dropdown-item class="dropdown-item" command="info">节点信息</el-dropdown-item>
+                  </el-dropdown-menu>
+                </template>
+              </el-dropdown>
+            </div>
           </div>
           <div class="node-name">
             {{ node.name }}
@@ -196,6 +242,47 @@ const rules = {
         </el-form-item>
       </el-form>
     </FormDrawer>
+
+    <el-dialog v-model="dialogFormVisible" :show-close="false" header="标题" width="420">
+      <div class="install-ref-box">
+        <h3>安装依赖</h3>
+        <div class="box-ref">
+          <div class="ref-package">
+            <div class="ref-env">
+              <div class="ref-name">
+                <el-icon class="ref-icon">
+                  <Clock/>
+                </el-icon>
+                <span class="ref-title">运行时环境</span>
+              </div>
+              <el-select
+                  v-model="installRefData.pkg_name"
+                  placeholder="请选择"
+                  style="width: 100%"
+              >
+                <el-option
+                    v-for="item in installRefOptions"
+                    :key="item.value"
+                    :label="item.label"
+                    :value="item.value"
+                />
+              </el-select>
+            </div>
+            <div class="ref-name">
+              <el-icon class="ref-icon">
+                <ElementPlus/>
+              </el-icon>
+              <span class="ref-title">依赖包名称</span>
+            </div>
+            <el-input placeholder="输入依赖包名称, numpy==1.24.0" style="width: 100%"></el-input>
+          </div>
+        </div>
+        <div class="footer" style="margin-top: 30px;">
+          <el-button type="info" style="width: 65px" @click="dialogFormVisible=false">取消</el-button>
+          <el-button style="width: 65px" type="primary">确定</el-button>
+        </div>
+      </div>
+    </el-dialog>
   </div>
 </template>
 
@@ -221,7 +308,7 @@ const rules = {
 /* -------- 卡片样式 -------- */
 .node-body {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  grid-template-columns: repeat(3, 1fr);
   gap: 28px;
   margin: 20px 0;
 }
@@ -231,19 +318,14 @@ const rules = {
   overflow: hidden;
 }
 
-.node-card:hover {
-  transform: scale(1.01);
-  box-shadow: 0 4px 12px rgba(43, 197, 50, 0.2); /* 鼠标悬浮更明显 */
-  background-color: #f9f9f9; /* 柔和背景变化 */
-}
-.offline-bgc:hover{
-  transform: scale(1.02);
-  box-shadow: 0 4px 12px rgba(218, 48, 28, 0.2); /* 鼠标悬浮更明显 */
-  background-color: rgba(243, 229, 224, 0.5);
+/* -------- 卡片内部样式 -------- */
+
+.header-card {
+  display: flex;
+  justify-content: space-between;
 }
 
-/* -------- 卡片内部样式 -------- */
-.card-header {
+.header-left {
   height: 24px;
   display: flex;
   align-items: center;
@@ -252,9 +334,11 @@ const rules = {
   font-size: 20px;
   color: #000;
 }
-.offline-bgc{
+
+.offline-bgc {
   background-color: rgba(243, 229, 224, 0.5);
 }
+
 .offline-color {
   color: #999;
 }
@@ -274,6 +358,60 @@ const rules = {
   background-color: #ea2418;
   margin-right: 8px;
 }
+
+
+.header-card {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.el-dropdown * {
+  outline: none;
+}
+
+/* ---------- 安装依赖 --------- */
+.install-ref-box{
+  padding: 0 20px 20px 20px;
+}
+
+.box-ref {
+  display: flex;
+  flex-direction: column;
+}
+
+.ref-package, .ref-env {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+}
+
+.ref-env {
+  margin: 5px 0 35px 0;
+}
+
+.ref-name {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  padding-bottom: 6px;
+}
+
+.ref-icon {
+  font-size: 18px;
+}
+
+.ref-title {
+  font-size: 16px;
+  margin-left: 6px;
+}
+
+.footer{
+  display: flex;
+  justify-content: flex-end;
+}
+
+/* -------- 卡片主体样式 -----------*/
 
 .node-name {
   font-size: 18px;
@@ -302,5 +440,6 @@ const rules = {
   align-items: center;
   justify-content: flex-end;
 }
+
 
 </style>
