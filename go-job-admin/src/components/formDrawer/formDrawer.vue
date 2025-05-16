@@ -33,6 +33,10 @@ defineProps({
   cancelText: {
     type: String,
     default: '取消'
+  },
+  showButton: {
+    type: Boolean,
+    default: true,
   }
 })
 
@@ -67,7 +71,7 @@ defineExpose({
       <div class="drawer-body">
         <slot></slot>
       </div>
-      <div class="actions">
+      <div class="actions" v-if="showButton">
         <el-button type="primary" @click="submit" class="form-submit" :loading="loading">{{ confirmText }}</el-button>
         <el-button type="default" @click="close">{{ cancelText }}</el-button>
       </div>

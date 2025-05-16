@@ -35,3 +35,22 @@ export function deleteNode(id) {
         method: 'delete',
     })
 }
+
+// 安装节点依赖
+export function installNodeRef(data, timeout=10000) {
+    return service({
+        url: `/nodes/install_ref`,
+        method: 'post',
+        data,
+        timeout,
+    })
+}
+
+// 查询节点信息
+export function getNodeInfo(id, timeout=10000) {
+    return service({
+        url: `/nodes/${id}/info`,
+        method: 'get',
+        timeout,
+    })
+}
