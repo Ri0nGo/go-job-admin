@@ -375,7 +375,7 @@ const filteredPackages = computed(() => {
     >
       <div class="node-info-box">
         <div class="info-header">
-          <div style="font-size: 22px; font-weight: bold; color: #fff">Python 3.10.11</div>
+          <div style="font-size: 22px; font-weight: bold; color: #fff">{{ nodeInfoData.version }}</div>
           <svg width="40" height="40" viewBox="0 0 300 300" style="overflow: visible;">
             <g>
               <path
