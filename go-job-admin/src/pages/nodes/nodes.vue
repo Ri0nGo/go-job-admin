@@ -140,13 +140,13 @@ const installRefRules = {
   pkg_name: [
     {
       required: true,   // 表示这是必填项
-      message: '运行时环境不能为空',  // 这是不符合规则是出发的消息
+      message: '依赖包不能为空',  // 这是不符合规则是出发的消息
       trigger: 'blur'  // 这是鼠标移动到输入框外是会触发的回调
     },
   ], type: [
     {
       required: true,   // 表示这是必填项
-      message: '依赖包不能为空',  // 这是不符合规则是出发的消息
+      message: '运行时环境不能为空',  // 这是不符合规则是出发的消息
       trigger: 'blur'  // 这是鼠标移动到输入框外是会触发的回调
     },
   ]
