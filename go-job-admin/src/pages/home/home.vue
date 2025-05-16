@@ -26,10 +26,10 @@ const lineChartData = ref({
     data: labels
   },
   grid: {
-    left: '5%',   // 默认可能是 '10%' 或更大
+    left: '8%',   // 默认可能是 '10%' 或更大
     right: '5%',  // 同样缩小右侧空隙
     top: '20%',   // 视需要调整上下边距
-    bottom: '30%'
+    bottom: '25%'
   },
   title: {
     text: '近7天任务执行情况'
@@ -53,10 +53,10 @@ const barChartData = ref({
     data: labels
   },
   grid: {
-    left: '5%',   // 默认可能是 '10%' 或更大
+    left: '8%',   // 默认可能是 '10%' 或更大
     right: '5%',  // 同样缩小右侧空隙
     top: '20%',   // 视需要调整上下边距
-    bottom: '30%'
+    bottom: '22%'
   },
   title: {
     text: '近7天任务运行情况'
@@ -328,7 +328,6 @@ onMounted(() => {
   height: 12px;
   border-radius: 50%; /* 变成圆形 */
   margin-right: 0.5em;
-  vertical-align: middle;
 }
 
 .online {
