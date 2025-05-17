@@ -1,5 +1,3 @@
-# V2 分支用于重构go-job-admin 
-
 go-job-admin 使用 Vite + Pinia + ElementUI 构建，是一主多从的任务执行平台
 
 ## 页面展示
