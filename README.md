@@ -38,3 +38,8 @@
 1. 绑定邮箱
 
 ![bind_email.png](img/bind_email.png)
+
+
+## 后端地址
+
+👉 [Ri0nGo/go-job](https://github.com/Ri0nGo/go-job)
