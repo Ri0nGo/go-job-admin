@@ -1,0 +1,39 @@
+services:
+  go-job-node-py:
+    image: go-job-node:v0.1
+    container_name: go-job-node-py
+    volumes:
+      - /etc/localtime:/etc/localtime
+      - /root/yamls/go-job/node.yaml:/app/config/node.yaml
+      - /data/docker/go-job-node-py/data:/app/data
+    networks:
+      - go-job-net
+    restart: unless-stopped
+
+  go-job-admin:
+    image: go-job-admin:v0.1
+    container_name: go-job-admin
+    volumes:
+      - /etc/localtime:/etc/localtime
+      - /data/docker/go-job-admin/conf.d:/etc/nginx/conf.d
+      - /data/docker/go-job-admin/log:/var/log/nginx
+    networks:
+      - go-job-net
+    restart: unless-stopped
+
+  go-job-master:
+    image: go-job-master:v0.1
+    container_name: go-job-master
+    volumes:
+      - /etc/localtime:/etc/localtime
+      - /root/yamls/go-job/master.yaml:/app/config/master.yaml
+      - /data/docker/go-job-master/data:/app/data
+    networks:
+      - go-job-net
+    restart: unless-stopped
+    depends_on:
+      - go-job-node-py
+
+networks:
+  go-job-net:
+    driver: bridge
