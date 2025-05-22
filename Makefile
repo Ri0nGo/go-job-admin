@@ -20,12 +20,30 @@ ADDRESS := "http://www.example.com"
 REGISTRY := REGISTRY.example.com/go-job-admin/
 REMOTE_IMAGE := $(REGISTRY)/$(IMAGE_NAME):$(VERSION)
 
+COMMIT_FILE=last_commit.txt
+CUR_DIR := $(CURDIR)
+
 .PHONY: build-img
 build-img:
 	@echo ">>> 开始构建 go-job node 镜像: $(FULL_IMAGE)"
 	@if [ -d "$(BUILD_DIR)" ]; then rm -rf $(BUILD_DIR); fi
 	@git clone git@github.com:Ri0nGo/go-job-admin.git $(BUILD_DIR)
 	@cd $(BUILD_DIR) && \
+		if [ -f $(CUR_DIR)/$(COMMIT_FILE) ]; then \
+					echo ">>> 本次构建的 Git 提交记录如下：" && \
+			git log --date=format:'%Y-%m-%d %H:%M:%S' \
+					--pretty=format:"%h|%an|%ad|%s" `cat $(CUR_DIR)/$(COMMIT_FILE)`..HEAD | \
+			while IFS="|" read -r hash author date msg; do \
+					printf "%-10s %-15s %-20s %s\n" "$$hash" "$$author" "$$date" "$$msg"; \
+			done; \
+		else \
+			echo ">>> 未找到提交记录文件 $(COMMIT_FILE)，显示最近 3 条提交：" && \
+			git log -n 3 --date=format:'%Y-%m-%d %H:%M:%S' \
+					--pretty=format:"%h|%an|%ad|%s" | \
+			while IFS="|" read -r hash author date msg; do \
+					printf "%-10s %-15s %-20s %s\n" "$$hash" "$$author" "$$date" "$$msg"; \
+			done; \
+		fi && \
 		echo "VITE_APP_BASE_API=$(ADDRESS)/api/go-job" > go-job-admin/$(ENV_FILE) && \
 		docker build -t $(FULL_IMAGE) . -f Dockerfile
 	@echo ">>> 构建完成: $(FULL_IMAGE)"
