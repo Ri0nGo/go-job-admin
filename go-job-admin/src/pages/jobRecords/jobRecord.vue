@@ -76,6 +76,8 @@ const handleSelectStatus = () => {
 
 const fetchJobRecords = async () => {
   const res = await getJobRecords({
+    order: "desc",
+    sort: "start_time",
     page_size: pageSize.value,
     page_num: currentPage.value,
     job_id: props.jobId
