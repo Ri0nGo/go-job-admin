@@ -1,4 +1,4 @@
-go-job-admin 使用 Vite + Pinia + ElementUI 构建，是一主多从的任务执行平台
+go-job-admin 使用 Vite + Pinia + ElementUI 技术栈，是任务执行平台前端项目
 
 ## 页面展示
 
