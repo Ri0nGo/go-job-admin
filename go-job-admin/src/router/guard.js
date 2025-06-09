@@ -3,6 +3,10 @@ import {useUserStore} from "../store/index.js";
 
 let hasGetInfo = false;
 
+const skipCheckPath = [
+    "/oauth2/callback"
+]
+
 export const setupRouterGuard = () => {
     // 鉴权前置路由
     createPermissionGuard(router);
@@ -14,9 +18,14 @@ function createPermissionGuard(router) {
         const userStore = useUserStore();
         const token = userStore.token
 
+        // 如果目标路径在白名单中，则直接放行
+        if (skipCheckPath.includes(to.path)) {
+            return next();
+        }
+
         // 未登录且不在登录页
         if (!token && to.path !== '/login') {
-            console.log("用户未登录，自动跳转到登录页")
+            console.log("用户未登录，自动跳转到登录页...")
             next({ path: "/login" });
             return;
         }

@@ -1,9 +1,10 @@
 <script setup>
 import {ref} from 'vue'
-import {User, Lock} from '@element-plus/icons-vue'
+import {Lock, User} from '@element-plus/icons-vue'
 import {login} from "@/apis/user/user.js";
 import router from "../../router/index.js";
 import {useUserStore} from "../../store/index.js";
+import {getGithubAuthUrl, getQQAuthUrl} from "../../apis/oauth2/oauth2.js";
 
 // ---------- 初始化 ---------- //
 const userStore = useUserStore()
@@ -40,6 +41,15 @@ const rules = {
   ],
 }
 
+// ----------第三方登录 ---------- //
+
+const onQQLogin = async () => {
+  window.location.href = await getQQAuthUrl()
+}
+
+const onGithubLogin = async () => {
+  window.location.href = await getGithubAuthUrl()
+}
 
 </script>
 
@@ -74,6 +84,19 @@ const rules = {
           </el-button>
         </el-form-item>
       </el-form>
+      <div class="more-login">
+        <span class="more-login-line"></span>
+        <span class="more-login-title">更多登录方式</span>
+        <span class="more-login-line"></span>
+      </div>
+      <div class="third-login">
+        <el-button class="third-login-btn" @click="onQQLogin">
+          <img src="@/assets/qq.svg" alt="QQ" width="31" height="31" />
+        </el-button>
+        <el-button class="third-login-btn" @click="onGithubLogin">
+          <img src="@/assets/github.svg" alt="Github" width="30" height="30" />
+        </el-button>
+      </div>
     </el-col>
   </el-row>
 </template>
@@ -145,5 +168,37 @@ const rules = {
   background-color: #85bc85;
   border: 1px solid #ccc;
 }
+
+/* ---------- 更多登录方式 ---------- */
+
+.more-login {
+  display: flex;
+  align-items: center;
+  margin-top: 20px;
+}
+.more-login-title{
+  color: #999;
+}
+.more-login-line {
+  width: 40px;
+  height: 2px;
+  margin: 0 5px;
+  border-radius: 25px;
+  background: #d3d4d5;
+}
+
+.third-login-btn {
+  all: unset; /* 彻底清除所有样式（包括 padding, border, background, font, etc.） */
+  cursor: pointer; /* 可选：恢复光标指示 */
+  margin: 0 16px;
+}
+
+.third-login {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 20px;
+}
+
 
 </style>
