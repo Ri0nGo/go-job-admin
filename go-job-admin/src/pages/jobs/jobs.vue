@@ -127,7 +127,9 @@ const onSubmit = async () => {
   }
 
   // 校验通知
-  if (formData.value.notify_type === 1 && !userStore.userInfo?.email) {
+  if (formData.value.notify_status === 1 &&
+      formData.value.notify_type === 1 &&
+      !userStore.userInfo?.email) {
     ElMessage.error("请先绑定邮箱才可以发送通知哦~")
     return
   }
