@@ -5,6 +5,7 @@ import router from "../router/index.js";
 
 const service = axios.create({
     baseURL: import.meta.env.VITE_APP_BASE_API,
+    withCredentials: true,
     timeout: 3000,
 })
 

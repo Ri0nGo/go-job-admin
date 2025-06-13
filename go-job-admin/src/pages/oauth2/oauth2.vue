@@ -4,6 +4,7 @@ import {onMounted} from "vue";
 import {getUser} from "../../apis/user/user.js";
 import {useUserStore} from "../../store/index.js";
 import { useRoute, useRouter } from "vue-router";
+import {notify} from "../../utils/notification.js";
 
 onMounted(async () => {
   const userStore = useUserStore()
@@ -18,6 +19,8 @@ onMounted(async () => {
     userStore.setToken(token)
   } else {
     await router.push("/login")
+    notify("认证异常，请重新登录~", "error","", 3000)
+    return
   }
 
   try{
