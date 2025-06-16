@@ -17,6 +17,12 @@ export const useUserStore = defineStore('userInfo', () => {
     const setToken = (t) => {
         token.value = t
     }
+    const getToken = () => {
+        return token.value
+    }
+    const getUid = () => {
+        return uid.value
+    }
 
     // 清除用户信息
     const clearUserStore = () => {
@@ -39,6 +45,8 @@ export const useUserStore = defineStore('userInfo', () => {
         uid,
         setToken,
         setUID,
+        getToken,
+        getUid,
         getUserInfo,
         clearUserStore,
     }

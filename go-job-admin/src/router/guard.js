@@ -4,7 +4,8 @@ import {useUserStore} from "../store/index.js";
 let hasGetInfo = false;
 
 const skipCheckPath = [
-    "/oauth2/callback"
+    "/oauth2/callback",
+    "/oauth2/bind"
 ]
 
 export const setupRouterGuard = () => {

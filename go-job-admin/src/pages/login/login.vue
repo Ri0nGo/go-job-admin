@@ -28,7 +28,6 @@ const onLogin = async () => {
   } finally {
     loading.value = false
   }
-
 }
 
 // ----------校验 ---------- //
@@ -44,11 +43,15 @@ const rules = {
 // ----------第三方登录 ---------- //
 
 const onQQLogin = async () => {
-  window.location.href = await getQQAuthUrl()
+  window.location.href = await getQQAuthUrl({
+    "scene": "login",
+  })
 }
 
 const onGithubLogin = async () => {
-  window.location.href = await getGithubAuthUrl()
+  window.location.href = await getGithubAuthUrl({
+    "scene": "login",
+  })
 }
 
 </script>

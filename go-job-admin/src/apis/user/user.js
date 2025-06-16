@@ -71,3 +71,11 @@ export function bindEmail(data) {
         data,
     })
 }
+
+export function bindOAuth2(data={}) {
+    return service({
+        url: `/users/bind/oauth2`,
+        data: data,
+        method: 'post',
+    })
+}
