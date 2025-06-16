@@ -19,9 +19,9 @@ export function getUsers(params = defaultPageSize) {
 }
 
 // 查询单个用户
-export function getUser(id) {
+export function getUser() {
     return service({
-        url: `/users/${id}`,
+        url: `/users/profile`,
         method: 'get',
     })
 }

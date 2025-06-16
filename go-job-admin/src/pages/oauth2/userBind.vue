@@ -47,8 +47,8 @@ const rules = {
 }
 
 const handleLogin = () => {
-  const uid = userStore.getUid();
-  if (!uid) {
+  const token = userStore.getToken();
+  if (!token) {
     router.push("/login")
   }else{
     router.push("/")

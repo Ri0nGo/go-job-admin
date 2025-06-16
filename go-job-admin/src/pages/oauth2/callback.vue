@@ -14,19 +14,17 @@ onMounted(async () => {
   const router = useRouter();
 
   const token = route.query.t;
-  const uid = route.query.uid;
   const redirect_page = route.query.redirect_page;
   const key = route.query.key;  // key存在则表示需要将第三方账户关联已存在账户
   const platform = route.query.platform;  // key存在则表示需要将第三方账户关联已存在账户
   console.log("query:", key, platform);
 
 
-  if (token && uid) {  // token 存在则直接登录
-    userStore.setUID(uid)
+  if (token) {  // token 存在则直接登录
     userStore.setToken(token)
 
     try{
-      const res = await getUser(uid);
+      const res = await getUser();
       console.log(res)
       await router.push(redirect_page);
     }catch(err){

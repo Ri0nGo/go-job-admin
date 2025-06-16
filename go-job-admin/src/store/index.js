@@ -9,19 +9,11 @@ export const useUserStore = defineStore('userInfo', () => {
     const uid = ref(null)
     const token = ref(null)
 
-    // 设置用户信息
-    const setUID = (id) => {
-        uid.value = id;
-    }
-
     const setToken = (t) => {
         token.value = t
     }
     const getToken = () => {
         return token.value
-    }
-    const getUid = () => {
-        return uid.value
     }
 
     // 清除用户信息
@@ -33,7 +25,7 @@ export const useUserStore = defineStore('userInfo', () => {
     }
 
     const getUserInfo = async () => {
-        const res = await getUser(uid.value)
+        const res = await getUser()
         userInfo.value = res
         return res
     }
@@ -44,9 +36,7 @@ export const useUserStore = defineStore('userInfo', () => {
         token,
         uid,
         setToken,
-        setUID,
         getToken,
-        getUid,
         getUserInfo,
         clearUserStore,
     }
