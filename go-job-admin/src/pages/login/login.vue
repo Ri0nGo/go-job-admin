@@ -22,7 +22,6 @@ const onLogin = async () => {
   loading.value = true
   try {
     const res = await login(formData.value)
-    userStore.setUID(res.id)
     await router.push("/")
   } catch (e) {
   } finally {

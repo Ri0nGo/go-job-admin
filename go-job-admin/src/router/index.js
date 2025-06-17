@@ -4,9 +4,10 @@ import Index from "../pages/index.vue";
 import Home from "../pages/home/home.vue";
 import Nodes from "../pages/nodes/nodes.vue";
 import Jobs from "../pages/jobs/jobs.vue";
-import Systems from "../pages/systems/systems.vue";
+import Settings from "../pages/settings/settings.vue";
 import Callback from "../pages/oauth2/callback.vue";
 import UserBind from "../pages/oauth2/userBind.vue";
+import Profile from "../pages/profile/profile.vue";
 
 
 const routes = [
@@ -15,9 +16,18 @@ const routes = [
         component: Index,
         children: [
             {path: '', component: Home},
-            {path: '/jobs', component: Jobs},
-            {path: '/nodes', component: Nodes},
-            {path: '/systems', component: Systems},
+            {path: 'jobs', component: Jobs},
+            {path: 'nodes', component: Nodes},
+            {
+                path: 'settings',
+                component: Settings,
+                children: [
+                    {
+                        path: "profile",
+                        component: Profile,
+                    }
+                ]
+            },
         ]
     },
     {path: '/login', component: Login},

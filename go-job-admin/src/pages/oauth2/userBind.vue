@@ -28,7 +28,6 @@ const onLogin = async () => {
   try {
     console.log("bind user data", formData.value)
     const res = await bindOAuth2(formData.value)
-    userStore.setUID(res.id)
     await router.push("/")
   } catch (e) {
   } finally {
