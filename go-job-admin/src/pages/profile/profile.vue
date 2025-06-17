@@ -30,16 +30,16 @@ const formatDay = (time) => {
           <div class="account-info">
             <div class="title">账号信息</div>
             <div class="section">
+              <div class="label-name">呢称</div>
+              <div class="content">{{userInfo?.nickname}}</div>
+            </div>
+            <div class="section">
               <div class="label-name">用户名</div>
               <div class="content">{{userInfo?.username}}</div>
             </div>
             <div class="section">
               <div class="label-name">邮箱</div>
               <div class="content">{{userInfo?.email}}</div>
-            </div>
-            <div class="section">
-              <div class="label-name">呢称</div>
-              <div class="content">{{userInfo?.nickname}}</div>
             </div>
           </div>
           <div class="system-info">
