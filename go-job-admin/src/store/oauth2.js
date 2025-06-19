@@ -4,14 +4,14 @@ import {defineStore} from "pinia";
 
 export const useOAuth2Store = defineStore('oauth2-info', () => {
     // 🌟 用 ref/reactive 定义状态
-    const key = ref(null)
+    const code = ref(null)
     const platform = ref(null)
 
-    const setKey = (val) => {
-        key.value = val;
+    const setCode = (val) => {
+        code.value = val;
     }
-    const getKey = () => {
-        return key.value
+    const getCode = () => {
+        return code.value
     }
 
     const setPlatform = (val) => {
@@ -23,12 +23,12 @@ export const useOAuth2Store = defineStore('oauth2-info', () => {
 
     // 清除用户信息
     const clean = () => {
-        key.value = null;
+        code.value = null;
     }
 
     return {
-        setKey,
-        getKey,
+        setCode,
+        getCode,
         setPlatform,
         getPlatform,
         clean,

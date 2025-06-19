@@ -91,7 +91,6 @@ const onBindEmail = async () => {
   } finally {
     bindEmailLoading.value = false;
   }
-
 }
 
 // 验证邮箱地址

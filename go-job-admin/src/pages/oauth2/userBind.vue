@@ -17,7 +17,7 @@ const userStore = useUserStore()
 const formData = ref({
   username: '',
   password: '',
-  key: oauthStore.getKey(),
+  code: oauthStore.getCode(),
 })
 
 const loading = ref(false)

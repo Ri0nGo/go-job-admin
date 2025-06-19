@@ -15,3 +15,4 @@ export function getQQAuthUrl(params={}) {
         method: 'get',
     })
 }
+

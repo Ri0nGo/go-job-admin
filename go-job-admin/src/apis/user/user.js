@@ -74,8 +74,23 @@ export function bindEmail(data) {
 
 export function bindOAuth2(data={}) {
     return service({
-        url: `/users/bind/oauth2`,
+        url: `/users/oauth2/bind`,
         data: data,
         method: 'post',
+    })
+}
+
+export function getAccountSecurity() {
+    return service({
+        url: `/users/security`,
+        method: 'get',
+    })
+}
+
+export function oauth2Code(data={}){
+    return service({
+        url: '/users/oauth2/code',
+        method: 'post',
+        data: data,
     })
 }
