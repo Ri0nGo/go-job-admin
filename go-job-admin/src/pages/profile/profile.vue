@@ -2,7 +2,7 @@
 import {ref} from 'vue'
 import {useUserStore} from "../../store/index.js";
 import dayjs from "dayjs";
-import {bindEmail, getAccountSecurity} from "../../apis/user/user.js";
+import {bindEmail, getAccountSecurity, unbindOAuth2} from "../../apis/user/user.js";
 import {notify} from "../../utils/notification.js";
 import {ElMessage} from "element-plus";
 import {getGithubAuthUrl, getQQAuthUrl} from "../../apis/oauth2/oauth2.js";
@@ -41,22 +41,35 @@ const handleBind = async (flag) => {
   switch (flag) {
     case 'qq':
       if (bindAccountData.value?.qq) {
-        console.log(bindAccountData.value?.qq, "解绑")
-      }else{
-        window.location.href = await getGithubAuthUrl(sceneParams)
+        try{
+          const res = await unbindOAuth2({
+            "auth_type": 2,
+          })
+        } catch(err){
+          console.log(err)
+        }
+
+
+        console.log(bindAccountData.value?.qq, "解绑", res)
+      } else {
+        window.location.href = await getQQAuthUrl(sceneParams)
       }
       return;
     case 'github':
       if (bindAccountData.value?.github) {
-        console.log(bindAccountData.value?.github, "解绑")
-      }else{
+        const res = await unbindOAuth2({
+          "auth_type": 1,
+        })
+        console.log(bindAccountData.value?.github, "解绑", res)
+
+      } else {
         window.location.href = await getGithubAuthUrl(sceneParams)
       }
       return;
     case 'email':
       if (bindAccountData.value?.email) {
         console.log(bindAccountData.value?.email, "解绑")
-      }else{
+      } else {
         dialogFormVisible.value = true;
       }
       return;
@@ -408,7 +421,6 @@ const onSendCode = async () => {
 .bind-action.unbind {
   background: linear-gradient(90deg, #f87171 30%, #fbbf24 100%);
 }
-
 
 
 /* 邮箱相关样式 */

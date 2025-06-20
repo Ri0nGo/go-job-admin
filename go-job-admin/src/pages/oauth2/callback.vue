@@ -1,12 +1,11 @@
 <script setup>
 
 import {onMounted} from "vue";
-import {getUser, oauth2Code} from "../../apis/user/user.js";
+import {oauth2Code} from "../../apis/user/user.js";
 import {useUserStore} from "../../store/index.js";
 import {useRoute, useRouter} from "vue-router";
 import {notify} from "../../utils/notification.js";
 import {useOAuth2Store} from "../../store/oauth2.js";
-import {ElMessage} from "element-plus";
 
 onMounted(async () => {
   const userStore = useUserStore()
@@ -32,14 +31,13 @@ onMounted(async () => {
 
   if (res.redirect_page) {
     await router.push(res.redirect_page);
-  }else{
+  } else {
     await router.push("/");
   }
   if (res.err.length > 0) {
     notify(res.err, "error", "", 3000)
   }
   console.log(res)
-
 
 
   // const token = route.query.t;

@@ -80,6 +80,14 @@ export function bindOAuth2(data={}) {
     })
 }
 
+export function unbindOAuth2(data={}) {
+    return service({
+        url: `/users/oauth2/unbind`,
+        method: 'post',
+        data,
+    })
+}
+
 export function getAccountSecurity() {
     return service({
         url: `/users/security`,
