@@ -1,16 +1,37 @@
 <script setup>
-import {ref} from 'vue'
+import {onMounted, ref} from 'vue'
 import {useUserStore} from "../../store/index.js";
 import dayjs from "dayjs";
 import {bindEmail, getAccountSecurity, unbindOAuth2} from "../../apis/user/user.js";
 import {notify} from "../../utils/notification.js";
 import {ElMessage} from "element-plus";
 import {getGithubAuthUrl, getQQAuthUrl} from "../../apis/oauth2/oauth2.js";
+import {useOAuth2Store} from "../../store/oauth2.js";
 
 const userStore = useUserStore()
 const userInfo = userStore.userInfo
 const bindAccountData = ref({})
 const activeName = ref('profile')
+
+// 为了处理标签页指定的问题
+onMounted(() => {
+  const oauth2Store = useOAuth2Store()
+  const flag = oauth2Store.getKVWithOAuth2("flag");
+  if (flag) {
+    activeName.value = flag
+  }
+  switch (flag) {
+    case "security":
+      activeName.value = flag
+      fetchAccountSecurity()
+      return;
+    case "profile":
+      return;
+    default:
+      return;
+
+  }
+})
 
 const fetchAccountSecurity = async () => {
   bindAccountData.value = await getAccountSecurity()
@@ -41,27 +62,22 @@ const handleBind = async (flag) => {
   switch (flag) {
     case 'qq':
       if (bindAccountData.value?.qq) {
-        try{
-          const res = await unbindOAuth2({
-            "auth_type": 2,
-          })
-        } catch(err){
-          console.log(err)
-        }
-
-
-        console.log(bindAccountData.value?.qq, "解绑", res)
+        await unbindOAuth2({
+          "auth_type": 2,
+        })
+        await fetchAccountSecurity()
+        notify("QQ 已解除绑定")
       } else {
         window.location.href = await getQQAuthUrl(sceneParams)
       }
       return;
     case 'github':
       if (bindAccountData.value?.github) {
-        const res = await unbindOAuth2({
+        await unbindOAuth2({
           "auth_type": 1,
         })
-        console.log(bindAccountData.value?.github, "解绑", res)
-
+        await fetchAccountSecurity()
+        notify("Github 已解除绑定")
       } else {
         window.location.href = await getGithubAuthUrl(sceneParams)
       }
