@@ -1,11 +1,12 @@
 <script setup>
-import {ref} from "vue";
+import {computed, ref} from "vue";
 import {getJobs} from "../../apis/job/job.js";
 import {getJobRecord, getJobRecords} from "../../apis/jobRecord/jobRecord.js";
 import dayjs from "dayjs";
 import {formatTime} from "../../utils/time.js";
 import DefaultPagination from "../../components/pagination/defaultPagination.vue";
 import {RefreshRight} from "@element-plus/icons-vue"
+import { marked } from 'marked';
 
 const outerDrawer = ref(false);
 const innerDrawer = ref(false);
@@ -167,6 +168,11 @@ const handleJobRecord = async (row) => {
   const res = await getJobRecord(row.id)
   logDetailData.value = res
 }
+const htmlOutput = computed(() => {
+  console.log(logDetailData.value)
+  return marked(logDetailData.value.output || '')
+})
+
 
 // ---------- 分页处理 ---------- //
 const currentPage = ref(1)
@@ -314,7 +320,10 @@ const handleCurrentChange = async (val) => {
               </div>
               <div class="base-item">
                 <h2 class="section-title">输出内容</h2>
-                <div class="output-content">{{ logDetailData.output }}</div>
+                <div
+                    class="output-content"
+                    v-html="htmlOutput"
+                ></div>
               </div>
               <div class="base-item">
                 <h2 class="section-title">错误信息</h2>
@@ -502,21 +511,62 @@ const handleCurrentChange = async (val) => {
   color: #909399;
   background: #f4f4f5;
 }
-
 .output-content {
-  white-space: pre-wrap;
-  word-break: break-word; /* 如果内容太长也能断行 */
-  font-family: 'Courier New', Courier, monospace;
-  font-size: 13px;
+  white-space: normal;
+  word-break: break-word;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  font-size: 14px;
   color: #333;
   line-height: 1.5;
-  max-height: 200px;
+  max-height: 400px;
   overflow-y: auto;
   padding: 12px;
-  background: #f1f1f1;
-  border-radius: 4px;
-  border: 1px solid #e6e6e6;
+  background: #f9f9f9;
+  border-radius: 6px;
+  border: 1px solid #ddd;
 }
+
+/* 标题 */
+.output-content h1, .output-content h2, .output-content h3 {
+  font-weight: bold;
+  margin-top: 1em;
+  margin-bottom: 0.5em;
+}
+
+/* 段落 */
+.output-content p {
+  margin: 0.5em 0;
+}
+
+/* 代码块 */
+.output-content pre {
+  white-space: pre-wrap;
+  line-height: 1.3;
+  padding: 10px;
+  background-color: #2d2d2d;
+  color: #eee;
+  border-radius: 4px;
+  overflow-x: auto;
+  font-family: 'Courier New', Courier, monospace;
+  font-size: 13px;
+  margin: 1em 0;
+}
+
+/* 行内代码 */
+.output-content code {
+  background-color: #f3f3f3;
+  padding: 2px 4px;
+  border-radius: 3px;
+  font-family: 'Courier New', Courier, monospace;
+  font-size: 13px;
+}
+
+/* 列表 */
+.output-content ul, .output-content ol {
+  padding-left: 2em;
+  margin: 0.5em 0;
+}
+
 
 .error-content {
   white-space: pre-wrap;

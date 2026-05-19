@@ -1,13 +1,20 @@
 <script setup>
 import {ref} from 'vue'
+import {Connection} from '@element-plus/icons-vue'
+import {useRoute} from "vue-router";
+/*
 import {Lock, User} from '@element-plus/icons-vue'
 import {login} from "@/apis/user/user.js";
 import router from "../../router/index.js";
 import {useUserStore} from "../../store/index.js";
 import {getGithubAuthUrl, getQQAuthUrl} from "../../apis/oauth2/oauth2.js";
+*/
+import {getOAuthInfo} from "../../apis/oauth2/oauth2.js";
+import {buildOAuthAuthUrl, createOAuthState, saveLoginRedirect, saveOAuthState} from "../../utils/oauth.js";
 
 // ---------- 初始化 ---------- //
-const userStore = useUserStore()
+// const userStore = useUserStore()
+const route = useRoute()
 
 // ---------- 数据 ---------- //
 const formData = ref({
@@ -16,8 +23,31 @@ const formData = ref({
 })
 
 const loading = ref(false)
+const error = ref('')
+
+const onOAuthLogin = async () => {
+  loading.value = true
+  error.value = ''
+  try {
+    const state = createOAuthState()
+    saveOAuthState(state)
+    saveLoginRedirect(route.query.redirect || '/')
+    const info = await getOAuthInfo({state})
+    if (!info.enabled) {
+      throw new Error('OAuth2 登录未启用')
+    }
+    if (!info.auth_url) {
+      throw new Error('后端未返回 OAuth2 授权地址')
+    }
+    window.location.href = buildOAuthAuthUrl(info, state)
+  } catch (err) {
+    error.value = err.message || '登录失败'
+    loading.value = false
+  }
+}
 
 // ---------- 登录 ---------- //
+/*
 const onLogin = async () => {
   loading.value = true
   try {
@@ -28,8 +58,10 @@ const onLogin = async () => {
     loading.value = false
   }
 }
+*/
 
 // ----------校验 ---------- //
+/*
 const rules = {
   username: [
     {required: true, message: '用户名不能为空', trigger: 'blur'},
@@ -38,9 +70,11 @@ const rules = {
     {required: true, message: '密码不能为空', trigger: 'blur'}
   ],
 }
+*/
 
 // ----------第三方登录 ---------- //
 
+/*
 const onQQLogin = async () => {
   window.location.href = await getQQAuthUrl({
     "scene": "login",
@@ -52,6 +86,7 @@ const onGithubLogin = async () => {
     "scene": "login",
   })
 }
+*/
 
 </script>
 
@@ -63,6 +98,7 @@ const onGithubLogin = async () => {
     <el-col :lg="8" :md="12" :sm="12" :xs="24" class="login-right">
       <h2>Go Job Admin</h2>
       <div class="login-title-sm">任务管理系统</div>
+      <!--
       <el-form
           :model="formData"
           :rules="rules"
@@ -86,6 +122,20 @@ const onGithubLogin = async () => {
           </el-button>
         </el-form-item>
       </el-form>
+      -->
+      <div class="oauth-login-desc">使用企业 IAM 账号一键登录，授权成功后自动回到系统。</div>
+      <el-alert v-if="error" :title="error" type="error" show-icon class="login-alert" />
+      <el-button
+          round
+          type="primary"
+          color="#626aef"
+          class="login-submit oauth-login-submit"
+          @click="onOAuthLogin"
+          :loading="loading">
+        <el-icon class="oauth-login-icon"><Connection /></el-icon>
+        一键 OAuth2 登录
+      </el-button>
+      <!--
       <div class="more-login">
         <span class="more-login-line"></span>
         <span class="more-login-title">更多登录方式</span>
@@ -99,6 +149,7 @@ const onGithubLogin = async () => {
           <img src="@/assets/github.svg" alt="Github" width="30" height="30" />
         </el-button>
       </div>
+      -->
     </el-col>
   </el-row>
 </template>
@@ -138,6 +189,30 @@ const onGithubLogin = async () => {
 
 .login-form {
   width: 280px;
+}
+
+.oauth-login-desc {
+  width: 300px;
+  color: #999;
+  line-height: 1.8;
+  text-align: center;
+  font-size: 14px;
+  margin-bottom: 18px;
+}
+
+.login-alert {
+  width: 300px;
+  margin-bottom: 16px;
+  border-radius: 12px;
+}
+
+.oauth-login-submit {
+  height: 42px;
+  font-size: 15px;
+}
+
+.oauth-login-icon {
+  margin-right: 6px;
 }
 
 .login-input ::v-deep(.el-input) {

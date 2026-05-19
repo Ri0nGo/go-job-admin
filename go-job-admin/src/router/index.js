@@ -8,6 +8,7 @@ import Settings from "../pages/settings/settings.vue";
 import Callback from "../pages/oauth2/callback.vue";
 import UserBind from "../pages/oauth2/userBind.vue";
 import Profile from "../pages/profile/profile.vue";
+import OAuthCallback from "../pages/oauth/callback.vue";
 
 
 const routes = [
@@ -31,6 +32,7 @@ const routes = [
         ]
     },
     {path: '/login', component: Login},
+    {path: '/oauth/callback', component: OAuthCallback},
     {path: '/oauth2/callback', component: Callback},
     {path: '/oauth2/bind', component: UserBind},
 

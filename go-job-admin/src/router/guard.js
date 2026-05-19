@@ -4,6 +4,7 @@ import {useUserStore} from "../store/index.js";
 let hasGetInfo = false;
 
 const skipCheckPath = [
+    "/oauth/callback",
     "/oauth2/callback",
     "/oauth2/bind"
 ]
@@ -27,7 +28,7 @@ function createPermissionGuard(router) {
         // 未登录且不在登录页
         if (!token && to.path !== '/login') {
             console.log("用户未登录，自动跳转到登录页...")
-            next({ path: "/login" });
+            next({ path: "/login", query: { redirect: to.fullPath } });
             return;
         }
 
